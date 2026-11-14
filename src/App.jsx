@@ -1,9 +1,10 @@
-function App() {
-  return (
-    <div>
-      <h1>Batalla Naval Probabilística</h1>
-    </div>
-  )
-}
+import { useState } from "react";
+import Portada from "./components/Portada";
+import Juego from "./components/Juego";
 
-export default App
+export default function App() {
+  const [jugando, setJugando] = useState(false);
+  if (!jugando) return <Portada onJugar={() => setJugando(true)} />;
+ 
+  return <Juego />; 
+}

@@ -1,0 +1,103 @@
+@import url("https://fonts.googleapis.com/css2?family=Bangers&display=swap");
+
+.portada {
+  --rojo: #c41a07;
+  --pizarra: #4a5060;
+  --naranja: #f98e4a;
+  --negro: #000;
+
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  box-sizing: border-box;
+  background-color: #409a9f;
+  background-size: cover;
+  background-position: center;
+  font-family: "Bangers", "Comic Sans MS", cursive;
+}
+
+.btn--chico {
+  width: auto;
+  padding: 6px 18px;
+  font-size: 1.1rem;
+  background: var(--naranja);
+  color: var(--negro);
+  box-shadow: 3px 3px 0 var(--negro);
+}
+
+.creditos {
+  list-style: none;
+  margin: 18px 0 14px;
+  padding: 0;
+  font-size: 1.6rem;
+  letter-spacing: 1px;
+  color: #fff;
+  text-shadow: 2px 2px 0 var(--negro);
+}
+.creditos li { margin: 6px 0; }
+
+.detalle {
+  margin: 0 0 22px;
+  font-family: system-ui, sans-serif;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: #d6e6ea;
+}
+
+/* Tarjeta central: oscurece lo justo para que el texto se lea */
+.tarjeta {
+  width: min(90vw, 460px);
+  padding: 28px 24px 32px;
+  text-align: center;
+  background: rgba(15, 45, 55, 0.88);
+  border: 6px solid var(--negro);
+  border-radius: 18px;
+  box-shadow: 10px 10px 0 var(--negro);
+}
+
+.titulo {
+  margin: 0;
+  font-size: clamp(2.4rem, 9vw, 3.6rem);
+  font-weight: 400;
+  letter-spacing: 2px;
+  line-height: 1.05;
+  color: #fff;
+  -webkit-text-stroke: 3px var(--negro);
+  paint-order: stroke fill;
+  text-shadow: 4px 4px 0 var(--rojo);
+}
+
+.subtitulo {
+  margin: 10px 0 28px;
+  font-size: clamp(1.3rem, 5vw, 1.8rem);
+  letter-spacing: 3px;
+  color: var(--naranja);
+  text-shadow: 2px 2px 0 var(--negro);
+}
+
+.menu { display: flex; flex-direction: column; gap: 18px; align-items: center; }
+
+.btn {
+  width: min(70vw, 280px);
+  padding: 12px 16px;
+  font-family: inherit;
+  font-size: 1.7rem;
+  letter-spacing: 2px;
+  cursor: pointer;
+  border: 4px solid var(--negro);
+  border-radius: 12px;
+  box-shadow: 5px 5px 0 var(--negro);
+  transition: transform 0.08s, box-shadow 0.08s;
+}
+.btn--jugar { background: var(--rojo); color: #fff; text-shadow: 2px 2px 0 var(--negro); }
+.btn--salir { background: #fff; color: var(--pizarra); }
+
+.btn:hover { transform: translate(-2px, -2px); box-shadow: 7px 7px 0 var(--negro); }
+.btn:active { transform: translate(4px, 4px); box-shadow: 1px 1px 0 var(--negro); }
+.btn:focus-visible { outline: 4px dashed var(--naranja); outline-offset: 4px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .btn { transition: none; }
+}
