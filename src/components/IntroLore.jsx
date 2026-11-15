@@ -15,7 +15,7 @@ const MENSAJES_LORE = [
     },
 ];
 
-export default function ModalLore({ onFinalizarLore }) {
+export default function IntroLore({ onFinalizarLore }) {
     const [paso, setPaso] = useState(0);
     const [textoVisible, setTextoVisible] = useState("");
     const mensajeActual = MENSAJES_LORE[paso];
