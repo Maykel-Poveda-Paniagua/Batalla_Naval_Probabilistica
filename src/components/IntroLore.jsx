@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import "../css/IntroLore.css";
 import oficial from "../assets/PrimerOficial.svg";
 
@@ -18,25 +18,28 @@ const MENSAJES_LORE = [
 export default function IntroLore({ onFinalizarLore }) {
     const [paso, setPaso] = useState(0);
     const [textoVisible, setTextoVisible] = useState("");
+    const intervaloRef = useRef(null);
     const mensajeActual = MENSAJES_LORE[paso];
 
     useEffect(() => {
         // eslint-disable-next-line react-hooks/set-state-in-effect
         setTextoVisible("");
         let indice = 0;
-        const intervalo = setInterval(() => {
+
+        intervaloRef.current = setInterval(() => {
             indice++;
             setTextoVisible(mensajeActual.texto.slice(0, indice));
             if (indice >= mensajeActual.texto.length) {
-                clearInterval(intervalo);
+                clearInterval(intervaloRef.current);
             }
         }, 25);
 
-        return () => clearInterval(intervalo);
+        return () => clearInterval(intervaloRef.current);
     }, [paso, mensajeActual.texto]);
 
     const manejarSiguiente = () => {
         if (textoVisible.length < mensajeActual.texto.length) {
+            clearInterval(intervaloRef.current);
             setTextoVisible(mensajeActual.texto);
             return;
         }
@@ -58,11 +61,11 @@ export default function IntroLore({ onFinalizarLore }) {
 
                 <div className="lore-cuerpo">
                     <div className="lore-avatar">
-                    <img
-                        src={oficial}
-                        alt="Oficial de Radar"
-                        style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "6px" }}
-                    />
+                        <img
+                            src={oficial}
+                            alt="Oficial de Radar"
+                            style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "6px" }}
+                        />
                     </div>
 
                     <div className="lore-dialogo">
@@ -75,10 +78,10 @@ export default function IntroLore({ onFinalizarLore }) {
                 </div>
 
                 <div className="lore-footer">
-                    <button className="btn-saltar" onClick={onFinalizarLore}>
+                    <button type="button" className="btn-saltar" onClick={onFinalizarLore}>
                         SALTAR INTRO
                     </button>
-                    <button className="btn-accion-lore" onClick={manejarSiguiente}>
+                    <button type="button" className="btn-accion-lore" onClick={manejarSiguiente}>
                         {textoVisible.length < mensajeActual.texto.length
                             ? "LEER TODO"
                             : mensajeActual.boton}
