@@ -1,0 +1,240 @@
+.tarjeta-panel {
+    display: flex;
+    flex-direction: column;
+    background-color: #f4ebd9;
+    border: 4px solid #6b3e26;
+    border-radius: 6px;
+    padding: 1rem 1.25rem;
+    color: #1b2a38;
+    box-shadow: 6px 6px 0px #0b1114;
+}
+
+.tarjeta-panel h3 {
+    margin: 0 0 0.75rem;
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: #6b3e26;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 3px dashed #6b3e26;
+    padding-bottom: 0.35rem;
+}
+
+/* Pie compartido para los 3 paneles */
+.proceso-pie,
+.panel-pie {
+    margin-top: auto;
+    padding-top: 0.55rem;
+    border-top: 2px dashed #6b3e26;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #243b53;
+}
+
+/* 1. Proceso */
+.lista-proceso {
+    list-style: none;
+    margin: 0 0 0.75rem;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+}
+
+.paso-fila {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    background-color: #e6d7b9;
+    border: 2px solid #6b3e26;
+    border-radius: 6px;
+    padding: 0.35rem 0.65rem;
+    font-size: 0.86rem;
+}
+
+.paso-fila--destacado {
+    background-color:  #f37e73;
+    border-color: #b63f34;
+}
+
+.paso-num {
+    display: grid;
+    place-items: center;
+    width: 1.35rem;
+    height: 1.35rem;
+    border-radius: 50%;
+    background-color: #6b3e26;
+    color: #f4ebd9;
+    font-size: 0.78rem;
+    font-weight: 800;
+    flex-shrink: 0;
+}
+
+.paso-fila--destacado .paso-num {
+    background-color: #b63f34;
+}
+
+.paso-nombre {
+    flex: 1;
+    font-weight: 700;
+    color: #243b53;
+}
+
+.paso-valor {
+    font-weight: 800;
+    color: #0b1114;
+}
+
+.paso-fila--destacado .paso-valor {
+    background-color: #f3b63a;
+    border: 2px solid #0b1114;
+    border-radius: 4px;
+    padding: 0.1rem 0.45rem;
+}
+
+/* 2. Estadísticas */
+.grid-estadisticas {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.55rem;
+    margin-bottom: 0.75rem;
+}
+
+.stat-caja {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.2rem;
+    background-color: #e6d7b9;
+    border: 2px solid #6b3e26;
+    border-left-width: 5px;
+    border-radius: 6px;
+    padding: 0.5rem 0.75rem;
+}
+
+.stat-caja--impacto {
+    border-left-color:#6b3e26;
+}
+
+.stat-caja--agua {
+    border-left-color:#6b3e26;
+}
+
+.stat-caja--flota {
+    border-left-color: #6b3e26;
+}
+
+.stat-etiqueta {
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #486581;
+}
+
+.stat-numero {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: #0b1114;
+    line-height: 1.1;
+}
+
+/* 3. Historial */
+.historial-vacio {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 0.25rem;
+    min-height: 120px;
+    margin-bottom: 0.75rem;
+    background-color: #e6d7b9;
+    border: 2px dashed #6b3e26;
+    border-radius: 6px;
+    padding: 0.75rem;
+    color: #243b53;
+    font-weight: 700;
+    font-size: 0.9rem;
+}
+
+.historial-vacio small {
+    font-weight: 600;
+    color: #486581;
+    font-size: 0.8rem;
+}
+
+.lista-historial {
+    list-style: none;
+    margin: 0 0 0.75rem;
+    padding: 0;
+    max-height: 205px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.historial-fila {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    background-color: #e6d7b9;
+    border: 2px solid #6b3e26;
+    border-radius: 6px;
+    padding: 0.35rem 0.6rem;
+    font-size: 0.85rem;
+}
+
+.historial-turno {
+    display: grid;
+    place-items: center;
+    min-width: 1.55rem;
+    height: 1.35rem;
+    padding: 0 0.25rem;
+    border-radius: 4px;
+    background-color: #6b3e26;
+    color: #f4ebd9;
+    font-size: 0.75rem;
+    font-weight: 800;
+}
+
+.historial-coord {
+    font-weight: 800;
+    color: #0b1114;
+    min-width: 2.1rem;
+}
+
+.historial-estado {
+    flex: 1;
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.4px;
+}
+
+.estado--agua {
+    color: #1565a8;
+}
+
+.estado--impacto,
+.estado--hundido {
+    color: #c51b0a;
+}
+
+.badge-origen {
+    font-size: 0.72rem;
+    font-weight: 800;
+    background-color: #d4c2a1;
+    color: #243b53;
+    border: 1px solid #6b3e26;
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+}
+
+.badge-origen--ia {
+    background-color: #1565a8;
+    color: #ffffff;
+    border-color: #0b1114;
+}

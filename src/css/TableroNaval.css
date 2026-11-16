@@ -1,0 +1,166 @@
+.tablero-marco {
+  --cafe: #6b3e26;
+  --pergamino: #f4ebd9;
+  --celeste: #8fd3f4;
+
+  box-sizing: border-box;
+  width: var(--tablero, clamp(280px, 40vw, 470px));
+  padding: 0.9rem 0.9rem 1rem;
+  background: var(--pergamino);
+  border: 6px solid var(--cafe);
+  border-radius: 14px;
+  box-shadow: 0 6px 0 rgba(0, 0, 0, 0.25), 0 14px 24px rgba(0, 0, 0, 0.25);
+}
+
+.tablero-titulo {
+  margin: 0 0 0.6rem;
+  text-align: center;
+  color: var(--cafe);
+  font-family: var(--fuente-titulo, 'Bangers', 'Impact', 'Arial Narrow', sans-serif);
+  font-size: clamp(1.3rem, 2.6vw, 1.8rem);
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  line-height: 1.1;
+}
+
+/* Borde interior discontinuo, estilo carta náutica */
+.tablero-interior {
+  padding: 0.5rem;
+  border: 4px dashed var(--cafe);
+  border-radius: 8px;
+}
+
+/* Mar: cuadrícula de 11x11 (coordenadas + 10x10 casillas) */
+.tablero-mar {
+  container-type: inline-size;
+  position: relative;
+  display: grid;
+  grid-template-columns: 0.7fr repeat(10, 1fr);
+  background: radial-gradient(circle at 50% 45%, #2389c9 0%, #0e4c84 100%);
+  border-radius: 6px;
+  box-shadow: inset 0 0 18px rgba(0, 0, 0, 0.35);
+}
+
+.coord {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 6.5cqw;
+  color: #fff;
+  font-size: 3.6cqw;
+  font-weight: 700;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.65);
+  user-select: none;
+}
+
+.celda {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  aspect-ratio: 1 / 1;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  border: 1px solid var(--celeste);
+  border-radius: 0;
+  color: #fff;
+  font: inherit;
+  font-size: 2.3cqw;
+  font-weight: 700;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.7);
+  z-index: 1;
+  cursor: crosshair;
+  transition: filter 0.12s, box-shadow 0.12s;
+}
+
+.celda:hover:not(:disabled) {
+  filter: brightness(1.18);
+  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.6);
+}
+
+.celda:disabled {
+  cursor: default;
+}
+
+.celda:focus-visible {
+  outline: 3px solid #f68d4a;
+  outline-offset: -3px;
+  z-index: 2;
+}
+
+/* Casilla sugerida por el algoritmo */
+.celda.celda--recomendada,
+.celda.celda--recomendada:hover:not(:disabled) {
+  box-shadow: inset 0 0 0 3px #fff, 0 0 0 2px #0b1114;
+  z-index: 1;
+}
+
+/* Marcadores de estado */
+.celda--agua::after {
+  content: '';
+  width: 34%;
+  height: 34%;
+  border-radius: 50%;
+  background: #fff;
+  opacity: 0.9;
+}
+
+.celda__explosion {
+  width: 82%;
+  height: 82%;
+  object-fit: contain;
+  pointer-events: none;
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.5));
+}
+
+.celda--hundido {
+  background: rgba(11, 17, 20, 0.25);
+}
+
+.barco--hundido {
+  filter: grayscale(100%) brightness(0.75) contrast(1.1);
+  opacity: 0.9;
+}
+
+.celda__porcentaje {
+  pointer-events: none;
+}
+
+/* Capa alineada con las 10x10 casillas para mostrar la flota */
+.tablero-capa {
+  --celda: 9.3458cqw;
+  position: absolute;
+  top: 6.5cqw;
+  left: 6.5421%;
+  width: 93.4579%;
+  aspect-ratio: 1 / 1;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.tablero-capa--debajo {
+  z-index: 0;
+}
+
+/* Barcos fijos en el tablero */
+.barco {
+  position: absolute;
+  pointer-events: none;
+  user-select: none;
+}
+
+.barco__img {
+  display: block;
+  width: calc(var(--n) * var(--celda));
+  height: var(--celda);
+  pointer-events: none;
+}
+
+.barco__img--vertical {
+  transform-origin: 0 0;
+  transform: translateX(var(--celda)) rotate(90deg);
+}
