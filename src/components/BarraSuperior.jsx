@@ -6,6 +6,7 @@ export default function BarraSuperior({
     nSimulaciones,
     onCambiarSimulaciones,
     onReiniciar,
+    apagado = false,
 }) {
     return (
         <header className="barra-superior">
@@ -13,6 +14,8 @@ export default function BarraSuperior({
                 type="button"
                 className="btn-reiniciar"
                 onClick={onReiniciar}
+                apagado={apagado}
+                style={apagado ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
             >
                 ↻ REINICIAR
             </button>
