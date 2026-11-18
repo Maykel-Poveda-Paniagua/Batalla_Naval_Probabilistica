@@ -11,7 +11,7 @@ const MENSAJES_LORE = [
     {
         emisor: "PRIMER OFICIAL",
         texto: "Tenga cuidado, Jefe: el enemigo usa un algoritmo probabilístico para deducir nuestra posición. Activamos nuestro propio mapa de calor para guiar sus disparos. ¡Despliegue la flota!",
-        boton: "¡A SUS PUESTOS! ⚓",
+        boton: "¡A SUS PUESTOS! ▸",
     },
 ];
 

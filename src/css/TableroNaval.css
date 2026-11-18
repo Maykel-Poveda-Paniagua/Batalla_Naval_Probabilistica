@@ -112,6 +112,7 @@
 .celda__explosion {
   width: 82%;
   height: 82%;
+  transform: scale(1.5);
   object-fit: contain;
   pointer-events: none;
   filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.5));
