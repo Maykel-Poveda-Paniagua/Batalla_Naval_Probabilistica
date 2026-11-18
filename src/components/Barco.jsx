@@ -13,6 +13,8 @@ export default function Barco({
     choca = false,
     atenuado = false,
     onPointerDown,
+    onPointerMove,
+    onPointerUp,
     onRotar,
 }) {
     const { id, nombre, tamano, fila, col, horizontal } = barco;
@@ -32,6 +34,9 @@ export default function Barco({
         <div
             className={clases}
             onPointerDown={onPointerDown}
+            onPointerMove={onPointerMove}
+            onPointerUp={onPointerUp}
+            onPointerCancel={onPointerUp}
             style={{
                 '--n': tamano,
                 left: `calc(${col} * var(--celda))`,
@@ -52,7 +57,10 @@ export default function Barco({
                     className="barco__rotar"
                     aria-label={`Rotar ${nombre}`}
                     onPointerDown={(e) => e.stopPropagation()}
-                    onClick={onRotar}
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        onRotar();
+                    }}
                 >
                     ↻
                 </button>

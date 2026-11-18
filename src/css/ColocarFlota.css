@@ -1,0 +1,116 @@
+.despliegue-contenedor {
+    text-align: center;
+    padding: 20px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.despliegue-titulo {
+    color: #f6d34a;
+    margin-bottom: 10px;
+}
+
+.despliegue-subtitulo {
+    color: #a0aec0;
+    margin-bottom: 20px;
+}
+
+.despliegue-tablero-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 25px;
+    position: relative;
+}
+
+/* Acciones */
+.despliegue-acciones {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+.btn-despliegue {
+    padding: 12px 24px;
+    font-size: 1rem;
+    font-weight: 800;
+    cursor: pointer;
+    border: 3px solid #0b1114;
+    border-radius: 8px;
+    box-shadow: 3px 3px 0px #0b1114;
+    color: #ffffff;
+    transition: transform 0.1s ease, filter 0.15s ease;
+}
+
+.btn-despliegue:hover {
+    filter: brightness(1.1);
+}
+
+.btn-despliegue:active {
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0px #0b1114;
+}
+
+.btn-despliegue--principal {
+    background-color: #d93829; 
+}
+
+.btn-despliegue--secundario {
+    background-color: #2c598a; 
+    font-size: 0.95rem;
+    padding: 12px 20px;
+}
+
+/* Botón de rotación flotante dentro del barco */
+.barco__rotar {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 18px;               /* Más pequeño (antes 26px) */
+    height: 18px;
+    font-size: 11px;           /* Ícono proporcional */
+    font-weight: bold;
+    line-height: 1;
+    padding: 0;
+    border-radius: 50%;
+    background-color: rgba(15, 23, 42, 0.55); /* Fondo más transparente */
+    color: rgba(255, 255, 255, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.65;             /* Menos invasivo por defecto */
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+    transition: opacity 0.15s ease, background-color 0.15s ease, transform 0.15s ease;
+    z-index: 10;
+}
+
+.barco:hover .barco__rotar {
+    display: flex;
+}
+
+.barco__rotar:hover {
+    opacity: 1;
+    background-color: rgba(37, 99, 235, 0.9);
+    color: #ffffff;
+    transform: translate(-50%, -50%) scale(1.15);
+}
+
+.barco:not(.barco--fijo) {
+    cursor: grab;
+    touch-action: none;
+    transition: left 0.12s ease, top 0.12s ease;
+}
+
+.barco:not(.barco--fijo):active {
+    cursor: grabbing;
+    z-index: 20;
+    transition: none;
+}
+
+.barco--choque {
+    filter: sepia(100%) saturate(600%) hue-rotate(-50deg) brightness(0.85);
+    opacity: 0.75;
+    cursor: not-allowed !important;
+}
