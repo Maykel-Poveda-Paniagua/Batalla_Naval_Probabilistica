@@ -8,7 +8,13 @@ import PanelEstadisticas from '../components/PanelEstadisticas';
 import PanelHistorial from '../components/PanelHistorial';
 import ColocarFlota from '../components/ColocarFlota';
 import { calcularProbabilidades } from '../algorithms/algoritmoProbabilistico';
-import { colocarFlotaAleatoria, obtenerBarcos, TAMANO_TABLERO } from '../utils/tablero';
+import {
+    colocarFlotaAleatoria,
+    obtenerBarcos,
+    TAMANO_TABLERO,
+    rotarBarcoEnTablero,
+    moverBarcoEnTablero,
+} from '../utils/tablero';
 import { realizarDisparo, verificarFinJuego } from '../utils/motorJuego';
 import { LETRAS } from '../utils/DatosPruebas';
 import '../css/Juego.css';
@@ -16,6 +22,7 @@ import '../css/Juego.css';
 export default function Juego() {
     const [fase, setFase] = useState('lore'); // 'lore' | 'despliegue' | 'combate'
     const [nSimulaciones, setNSimulaciones] = useState(5000);
+    const [esperandoEnemigo, setEsperandoEnemigo] = useState(false);
 
     const manejarFinLore = () => {
         setFase('despliegue');
@@ -48,6 +55,12 @@ export default function Juego() {
         ? `${LETRAS[infoProceso.recomendada.fila]}${infoProceso.recomendada.col + 1}`
         : '—';
 
+    const siguienteAccion = juegoTerminado
+        ? 'Partida finalizada'
+        : esperandoEnemigo
+        ? 'Esperando ataque...'
+        : 'Esperando tu disparo';
+
     const manejarReiniciar = () => {
         const nuevoTableroJugador = colocarFlotaAleatoria();
         const nuevoTableroEnemigo = colocarFlotaAleatoria();
@@ -63,13 +76,28 @@ export default function Juego() {
         setTurno(0);
         setJuegoTerminado(false);
         setGanador(null);
+        setEsperandoEnemigo(false);
         setFase('despliegue');
     };
 
-    const manejarDisparo = (fila, col) => {
-        if (juegoTerminado) return;
+    const manejarRotarBarco = (idBarco) => {
+        const nuevoTablero = rotarBarcoEnTablero(tableroJugador, idBarco, TAMANO_TABLERO);
+        setTableroJugador(nuevoTablero);
+        setEstadosPropios(tableroAStrings(nuevoTablero, true));
+        setBarcosPropios(obtenerBarcosParaUI(nuevoTablero));
+    };
 
-        const nuevoTablero = tableroEnemigo.map(f => f.map(c => ({ ...c })));
+    const manejarMoverBarco = (idBarco, nuevaFila, nuevaCol) => {
+        const nuevoTablero = moverBarcoEnTablero(tableroJugador, idBarco, nuevaFila, nuevaCol, TAMANO_TABLERO);
+        setTableroJugador(nuevoTablero);
+        setEstadosPropios(tableroAStrings(nuevoTablero, true));
+        setBarcosPropios(obtenerBarcosParaUI(nuevoTablero));
+    };
+
+    const manejarDisparo = (fila, col) => {
+        if (juegoTerminado || esperandoEnemigo) return;
+
+        const nuevoTablero = tableroEnemigo.map((f) => f.map((c) => ({ ...c })));
         const resultado = realizarDisparo(nuevoTablero, fila, col);
 
         if (!resultado.exito) return;
@@ -79,14 +107,14 @@ export default function Juego() {
 
         const barcosEnemigos = obtenerBarcos(nuevoTablero);
         const hundidos = barcosEnemigos
-            .filter(b => b.celdas.every(celda => nuevoTablero[celda.fila][celda.col].atacado))
-            .map(b => ({
+            .filter((b) => b.celdas.every((celda) => nuevoTablero[celda.fila][celda.col].atacado))
+            .map((b) => ({
                 id: b.nombre.toLowerCase(),
                 nombre: b.nombre,
                 tamano: b.tamano,
-                fila: b.celdas[0].fila,
-                col: b.celdas[0].col,
-                horizontal: b.celdas[0].orientacion === 'horizontal',
+                fila: b.fila,
+                col: b.col,
+                horizontal: b.horizontal,
             }));
         setBarcosHundidos(hundidos);
 
@@ -102,16 +130,21 @@ export default function Juego() {
         }
         setEstadisticas(nuevasStats);
 
-        const fueSeguida = infoProceso.recomendada &&
-                           infoProceso.recomendada.fila === fila &&
-                           infoProceso.recomendada.col === col;
-        setHistorial(prev => [{
-            turno: turno + 1,
-            coord: `${LETRAS[fila]}${col + 1}`,
-            resultado: resultado.hundido ? 'hundido' : resultado.resultado,
-            siguioRecomendacion: fueSeguida,
-        }, ...prev]);
-        setTurno(prev => prev + 1);
+        const fueSeguida =
+            infoProceso.recomendada &&
+            infoProceso.recomendada.fila === fila &&
+            infoProceso.recomendada.col === col;
+
+        setHistorial((prev) => [
+            {
+                turno: turno + 1,
+                coord: `${LETRAS[fila]}${col + 1}`,
+                resultado: resultado.hundido ? 'hundido' : resultado.resultado,
+                siguioRecomendacion: fueSeguida,
+            },
+            ...prev,
+        ]);
+        setTurno((prev) => prev + 1);
 
         if (verificarFinJuego(nuevoTablero)) {
             setJuegoTerminado(true);
@@ -119,15 +152,21 @@ export default function Juego() {
             return;
         }
 
-        setTimeout(() => turnoAgente(nuevoTablero, tableroAStrings(nuevoTablero, false)), 500);
+        setEsperandoEnemigo(true);
+        setTimeout(() => {
+            turnoAgente();
+            setEsperandoEnemigo(false);
+        }, 700);
     };
 
-    const turnoAgente = (tableroEnemigoActual, estadosEnemigoActual) => {
-        const info = calcularProbabilidades(estadosEnemigoActual, nSimulaciones);
+    const turnoAgente = () => {
+        // La IA evalúa lo que conoce de tu tablero (sin ver tus barcos intactos)
+        const vistaOcultaJugador = tableroAStrings(tableroJugador, false);
+        const info = calcularProbabilidades(vistaOcultaJugador, nSimulaciones);
         if (!info.recomendada) return;
 
         const { fila, col } = info.recomendada;
-        const nuevoTableroJugador = tableroJugador.map(f => f.map(c => ({ ...c })));
+        const nuevoTableroJugador = tableroJugador.map((f) => f.map((c) => ({ ...c })));
         const resultado = realizarDisparo(nuevoTableroJugador, fila, col);
 
         if (!resultado.exito) return;
@@ -151,9 +190,7 @@ export default function Juego() {
 
     return (
         <div className="juego-contenedor">
-            {fase === 'lore' && (
-                <ModalLore onFinalizarLore={manejarFinLore} />
-            )}
+            {fase === 'lore' && <ModalLore onFinalizarLore={manejarFinLore} />}
 
             {(fase === 'combate' || fase === 'lore') && (
                 <BarraSuperior
@@ -171,13 +208,15 @@ export default function Juego() {
                         flotaPropia={barcosPropios}
                         onIniciarBatalla={() => setFase('combate')}
                         onPosicionAleatoria={manejarPosicionAleatoria}
+                        onRotarBarco={manejarRotarBarco}
+                        onMoverBarco={manejarMoverBarco}
                     />
                 ) : (
                     <>
                         <div className="fila-tableros">
                             <TableroNaval titulo="Tu Flota" estados={estadosPropios} capaDebajo>
                                 {barcosPropios.map((barco) => (
-                                    <Barco key={barco.id} barco={barco} />
+                                    <Barco key={barco.id} barco={barco} hundido={barco.hundido} />
                                 ))}
                             </TableroNaval>
 
@@ -200,6 +239,7 @@ export default function Juego() {
                                 validas={infoProceso.validas}
                                 tiempoMs={infoProceso.tiempoMs}
                                 recomendacion={coordRecomendada}
+                                siguienteAccion={siguienteAccion}
                             />
                             <PanelEstadisticas
                                 disparos={estadisticas.disparos}
@@ -249,24 +289,14 @@ function tableroAStrings(tablero, esPropio) {
 }
 
 function obtenerBarcosParaUI(tablero) {
-    const barcosMap = {};
-    for (let f = 0; f < TAMANO_TABLERO; f++) {
-        for (let c = 0; c < TAMANO_TABLERO; c++) {
-            const celda = tablero[f][c];
-            if (celda.barco) {
-                const id = celda.barco.id;
-                if (!barcosMap[id]) {
-                    barcosMap[id] = {
-                        id: celda.barco.nombre.toLowerCase(),
-                        nombre: celda.barco.nombre,
-                        tamano: celda.barco.tamano,
-                        fila: f,
-                        col: c,
-                        horizontal: celda.barco.orientacion === 'horizontal',
-                    };
-                }
-            }
-        }
-    }
-    return Object.values(barcosMap);
+    return obtenerBarcos(tablero).map((b) => ({
+        id: b.nombre.toLowerCase(),
+        barcoId: b.id,
+        nombre: b.nombre,
+        tamano: b.tamano,
+        fila: b.fila,
+        col: b.col,
+        horizontal: b.horizontal,
+        hundido: b.celdas.every((c) => tablero[c.fila][c.col].atacado),
+    }));
 }
