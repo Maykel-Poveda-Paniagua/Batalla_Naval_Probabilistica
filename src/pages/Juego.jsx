@@ -3,6 +3,7 @@ import ModalLore from '../components/IntroLore';
 import BarraSuperior from '../components/BarraSuperior';
 import TableroNaval from '../components/TableroNaval';
 import Barco from '../components/Barco';
+import FinJuego from '../components/FinJuego';
 import PanelProceso from '../components/PanelProceso';
 import PanelEstadisticas from '../components/PanelEstadisticas';
 import PanelHistorial from '../components/PanelHistorial';
@@ -254,10 +255,12 @@ export default function Juego() {
             </main>
 
             {juegoTerminado && (
-                <div className="modal-fin-juego">
-                    <h2>{ganador === 'jugador' ? '¡Ganaste!' : '¡Perdiste!'}</h2>
-                    <button onClick={manejarReiniciar}>Nueva Partida</button>
-                </div>
+                <FinJuego
+                    ganador={ganador}
+                    estadisticas={estadisticas}
+                    historial={historial}
+                    onReiniciar={manejarReiniciar}
+                />
             )}
         </div>
     );
