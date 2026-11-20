@@ -2,12 +2,31 @@ import { useState } from "react";
 import fondo from "../assets/Portada.jpg";
 import "../css/Portada.css";
 
+/**
+ * Nombres de los integrantes del equipo que aparecen en la pantalla de créditos.
+ *
+ * @type {string[]}
+ */
 const INTEGRANTES = [
 	"Rashely González Thompson",
 	"Yeinery Durán Bastos",
 	"Maykel Poveda Paniagua",
 ];
 
+/**
+ * Pantalla de inicio del juego con el menú principal, que permite empezar la partida,
+ * ver los créditos del curso y del equipo o mostrar un mensaje de despedida al salir.
+ *
+ * @component
+ * @example
+ * return (
+ *   <Portada onJugar={() => console.log('Iniciando juego')} />
+ * )
+ *
+ * @param {Object} props - Propiedades del componente.
+ * @param {Function} [props.onJugar=() => {}] - Función que se ejecuta al hacer clic en el botón "Jugar".
+ * @returns {JSX.Element} Vista de portada con navegación entre menú principal, créditos y salida.
+ */
 export default function Portada({ onJugar = () => {} }) {
   	const [salio, setSalio] = useState(false);
   	const [creditos, setCreditos] = useState(false);

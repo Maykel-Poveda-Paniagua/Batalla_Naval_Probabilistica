@@ -1,5 +1,41 @@
 import '../css/PanelesInferiores.css';
 
+/**
+ * @typedef {Object} RegistroDisparoJugador
+ * @property {number} turno - Número de turno del disparo del jugador.
+ * @property {string} coord - Casilla atacada (por ejemplo, 'D6').
+ * @property {'agua'|'impacto'|'hundido'} resultado - Resultado del disparo.
+ * @property {boolean} [siguioRecomendacion] - Indica si el jugador atacó la casilla sugerida por la IA.
+ * @property {number} [probabilidad] - Porcentaje de probabilidad que tenía esa casilla al disparar.
+ */
+
+/**
+ * @typedef {Object} RegistroDisparoAgente
+ * @property {number} turno - Número de turno del disparo del agente IA.
+ * @property {string} coord - Casilla atacada por la IA (por ejemplo, 'E6').
+ * @property {'agua'|'impacto'|'hundido'} resultado - Resultado del disparo de la IA.
+ * @property {number} probabilidad - Porcentaje de probabilidad con el que la IA eligió esa casilla.
+ */
+
+/**
+ * Muestra la lista de disparos realizados durante la partida, separados entre
+ * el jugador y el agente IA, indicando la casilla atacada, el resultado y si se
+ * siguió la recomendación de la IA.
+ *
+ * @component
+ * @example
+ * return (
+ *   <PanelHistorial
+ *     historialJugador={[{ turno: 1, coord: 'F5', resultado: 'agua', siguioRecomendacion: true, probabilidad: 18 }]}
+ *     historialAgente={[{ turno: 1, coord: 'E6', resultado: 'impacto', probabilidad: 20 }]}
+ *   />
+ * )
+ *
+ * @param {Object} props - Propiedades del componente.
+ * @param {RegistroDisparoJugador[]} [props.historialJugador=[]] - Lista con los disparos que ha hecho el jugador.
+ * @param {RegistroDisparoAgente[]} [props.historialAgente=[]] - Lista con los disparos que ha hecho el agente IA.
+ * @returns {JSX.Element} Tarjeta con el historial de jugadas de ambos bandos y el total de disparos.
+ */
 export default function PanelHistorial({
     historialJugador = [],
     historialAgente = [],

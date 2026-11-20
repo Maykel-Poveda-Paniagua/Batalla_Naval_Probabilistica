@@ -2,6 +2,11 @@ import { useState, useEffect, useRef } from "react";
 import "../css/IntroLore.css";
 import oficial from "../assets/PrimerOficial.svg";
 
+/**
+ * Mensajes de la historia inicial que aparecen antes de empezar a colocar los barcos.
+ *
+ * @type {Array.<{emisor: string, texto: string, boton: string}>}
+ */
 const MENSAJES_LORE = [
     {
         emisor: "PRIMER OFICIAL",
@@ -15,6 +20,20 @@ const MENSAJES_LORE = [
     },
 ];
 
+/**
+ * Ventana de introducción que muestra un diálogo animado letra por letra
+ * para poner en contexto la batalla antes de pasar a acomodar la flota.
+ *
+ * @component
+ * @example
+ * return (
+ *   <IntroLore onFinalizarLore={() => console.log('Intro completada')} />
+ * )
+ *
+ * @param {Object} props - Propiedades del componente.
+ * @param {Function} props.onFinalizarLore - Función que se ejecuta al terminar o saltar la introducción.
+ * @returns {JSX.Element} Ventana con el mensaje de alerta, botones para avanzar o saltar la intro.
+ */
 export default function IntroLore({ onFinalizarLore }) {
     const [paso, setPaso] = useState(0);
     const [textoVisible, setTextoVisible] = useState("");
@@ -37,6 +56,12 @@ export default function IntroLore({ onFinalizarLore }) {
         return () => clearInterval(intervaloRef.current);
     }, [paso, mensajeActual.texto]);
 
+    /**
+     * Si el mensaje todavía se está escribiendo, lo muestra completo de golpe;
+     * si ya terminó, pasa al siguiente diálogo o cierra la introducción.
+     *
+     * @returns {void}
+     */
     const manejarSiguiente = () => {
         if (textoVisible.length < mensajeActual.texto.length) {
             clearInterval(intervaloRef.current);

@@ -1,5 +1,43 @@
 import '../css/PanelesInferiores.css';
 
+/**
+ * @typedef {Object} MetricasBando
+ * @property {number} disparos - Total de tiros realizados.
+ * @property {number} impactos - Tiros que dieron en un barco.
+ * @property {number} fallos - Tiros que cayeron en agua.
+ * @property {number} hundidos - Cantidad de barcos enemigos hundidos.
+ * @property {number} restantes - Cantidad de barcos enemigos que siguen a flote.
+ */
+
+/**
+ * @typedef {Object} ResumenUsoIA
+ * @property {number} seguidas - Veces en que el jugador atacó la casilla sugerida por la IA.
+ * @property {number} total - Total de turnos en los que hubo una recomendación disponible.
+ */
+
+/**
+ * Muestra las estadísticas de la partida tanto del jugador como del agente IA:
+ * disparos, aciertos, fallos, barcos hundidos, qué tanto sigue el jugador las
+ * recomendaciones de la IA y cuánto tarda el algoritmo en responder.
+ *
+ * @component
+ * @example
+ * return (
+ *   <PanelEstadisticas
+ *     statsJugador={{ disparos: 12, impactos: 5, fallos: 7, hundidos: 1, restantes: 4 }}
+ *     statsAgente={{ disparos: 12, impactos: 6, fallos: 6, hundidos: 1, restantes: 4 }}
+ *     usoIA={{ seguidas: 8, total: 12 }}
+ *     tiempoIA={6.4}
+ *   />
+ * )
+ *
+ * @param {Object} props - Propiedades del componente.
+ * @param {MetricasBando} [props.statsJugador={ disparos: 0, impactos: 0, fallos: 0, hundidos: 0, restantes: 5 }] - Datos acumulados del jugador.
+ * @param {MetricasBando} [props.statsAgente={ disparos: 0, impactos: 0, fallos: 0, hundidos: 0, restantes: 5 }] - Datos acumulados del agente IA.
+ * @param {ResumenUsoIA} [props.usoIA={ seguidas: 0, total: 0 }] - Conteo de cuántas veces el jugador siguió el consejo de la IA.
+ * @param {number} [props.tiempoIA=0] - Tiempo que tardó el último cálculo de la IA (en milisegundos).
+ * @returns {JSX.Element} Tarjeta con el resumen de estadísticas de ambos bandos.
+ */
 export default function PanelEstadisticas({
     statsJugador = { disparos: 0, impactos: 0, fallos: 0, hundidos: 0, restantes: 5 },
     statsAgente = { disparos: 0, impactos: 0, fallos: 0, hundidos: 0, restantes: 5 },

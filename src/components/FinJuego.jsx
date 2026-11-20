@@ -4,6 +4,11 @@ import capitanDerrota from '../assets/Derrota.svg';
 import '../css/IntroLore.css';
 import '../css/FinJuego.css';
 
+/**
+ * Mensajes y encabezados que se muestran al terminar la partida según quién haya ganado.
+ *
+ * @type {Object.<string, {titulo: string, emisor: string, texto: string}>}
+ */
 const DIALOGOS_FIN = {
     jugador: {
         titulo: 'VICTORIA - FLOTA ENEMIGA NEUTRALIZADA',
@@ -17,6 +22,40 @@ const DIALOGOS_FIN = {
     },
 };
 
+/**
+ * @typedef {Object} EstadisticasFin
+ * @property {number} disparos - Total de tiros que hizo el jugador en la partida.
+ * @property {number} impactos - Total de tiros que dieron en un barco enemigo.
+ */
+
+/**
+ * @typedef {Object} EntradaHistorialFin
+ * @property {boolean} [siguioRecomendacion] - Indica si el jugador atacó la casilla que le sugirió la IA.
+ */
+
+/**
+ * Ventana final que anuncia si ganaste o perdiste con un mensaje animado,
+ * muestra tu resumen de disparos, precisión y uso de la IA, y permite minimizar
+ * el cartel para revisar cómo quedaron los tableros.
+ *
+ * @component
+ * @example
+ * return (
+ *   <FinJuego
+ *     ganador="jugador"
+ *     estadisticas={{ disparos: 46, impactos: 17 }}
+ *     historial={[]}
+ *     onReiniciar={() => {}}
+ *   />
+ * )
+ *
+ * @param {Object} props - Propiedades del componente.
+ * @param {'jugador'|'agente'} props.ganador - Indica quién ganó la partida (`'jugador'` o `'agente'`).
+ * @param {EstadisticasFin} props.estadisticas - Resumen final de disparos e impactos del jugador.
+ * @param {EntradaHistorialFin[]} [props.historial=[]] - Lista de turnos del jugador para contar cuántas veces siguió la sugerencia de la IA.
+ * @param {Function} props.onReiniciar - Función que se ejecuta al hacer clic en el botón para empezar una nueva partida.
+ * @returns {JSX.Element} Ventana modal o barra inferior minimizada con el resumen del encuentro.
+ */
 export default function FinJuego({
     ganador,
     estadisticas,
