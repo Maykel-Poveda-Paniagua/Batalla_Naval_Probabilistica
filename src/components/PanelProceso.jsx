@@ -4,13 +4,14 @@ export default function PanelProceso({
     validas = 0,
     tiempoMs = 0,
     recomendacion = '—',
+    siguienteAccion = 'Esperando tu disparo',
 }) {
     const pasos = [
         { num: 1, label: 'Información del tablero', valor: 'Actualizada' },
         { num: 2, label: 'Configuraciones válidas', valor: validas.toLocaleString('es-CR') },
         { num: 3, label: 'Mapa de probabilidades', valor: 'Calculado' },
         { num: 4, label: 'Celda recomendada', valor: recomendacion, destacado: true },
-        { num: 5, label: 'Siguiente acción', valor: 'Esperando disparo' },
+        { num: 5, label: 'Siguiente acción', valor: siguienteAccion },
     ];
 
     return (
