@@ -1,6 +1,14 @@
 import { TAMANO_TABLERO, barcoHundido, obtenerBarcos } from './tablero.js';
 
 // Realiza un disparo en el tablero
+/**
+ * Realiza un disparo y devuelve si fue agua, impacto o barco hundido.
+ *
+ * @param {Array<Array<Object>>} tablero - Tablero donde se realiza el disparo.
+ * @param {number} fila - Fila que se quiere atacar.
+ * @param {number} col - Columna que se quiere atacar.
+ * @returns {Object} Resultado del disparo o mensaje si no se pudo realizar.
+ */
 export function realizarDisparo(tablero, fila, col) {
 
   // Validar coordenadas
@@ -33,6 +41,7 @@ export function realizarDisparo(tablero, fila, col) {
       col: col,
     };
 
+
   } else {
     celda.resultado = 'agua';
     return {
@@ -41,11 +50,18 @@ export function realizarDisparo(tablero, fila, col) {
       fila: fila,
       col: col,
     };
+    
   }
 
 }
 
 // verifica si el juego terminó
+/**
+ * Revisa si todos los barcos del tablero ya están hundidos.
+ *
+ * @param {Array<Array<Object>>} tablero - Tablero que se revisa.
+ * @returns {boolean} Verdadero si ya no quedan barcos sin hundir.
+ */
 export function verificarFinJuego(tablero) {
   const barcos = obtenerBarcos(tablero);
   

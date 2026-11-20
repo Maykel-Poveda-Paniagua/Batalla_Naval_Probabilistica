@@ -1,4 +1,9 @@
 // Crea objeto de estadísticas vacío
+/**
+ * Crea las estadísticas iniciales de la partida.
+ *
+ * @returns {Object} Estadísticas con todos los contadores en cero.
+ */
 export function crearEstadisticas() {
   return {
     disparosJugador: 0,
@@ -13,6 +18,15 @@ export function crearEstadisticas() {
 }
 
 // Actualiza estadísticas después de un disparo
+/**
+ * Actualiza los contadores según el resultado de un disparo.
+ *
+ * @param {Object} stats - Estadísticas que se van a actualizar.
+ * @param {string} tipo - Indica si disparó el jugador o el agente.
+ * @param {string} resultado - Resultado del disparo.
+ * @param {boolean} hundido - Indica si el disparo hundió un barco.
+ */
+
 export function actualizarEstadisticas(stats, tipo, resultado, hundido) {
   if (tipo === 'jugador') {
     stats.disparosJugador++;
@@ -22,6 +36,8 @@ export function actualizarEstadisticas(stats, tipo, resultado, hundido) {
     } else {
       stats.fallosJugador++;
     }
+
+
   } else {
     stats.disparosAgente++;
     if (resultado === 'impacto') {
@@ -30,5 +46,7 @@ export function actualizarEstadisticas(stats, tipo, resultado, hundido) {
     } else {
       stats.fallosAgente++;
     }
+
+    
   }
 }
