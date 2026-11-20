@@ -1,21 +1,17 @@
- /**
- * Proyecto #2: Batalla Naval Probabilística 
- Curso: IC-3002 Análisis de Algoritmos — Tecnológico de Costa Rica (TEC)
- * Profesor: Ing. Joss Pecou Johnson
- *
- * Módulo de la Persona 2: Algoritmo Probabilístico Basado en Simulación Monte Carlo
- * Ubicación en el repositorio: src/algorithms/algoritmoProbabilistico.js
- *
- * REGLA FUNDAMENTAL DEL ENUNCIADO:
- * Este módulo contiene lógica pura en JavaScript, completamente separada de React UI,
- * y NO recibe en ningún momento la ubicación real de la flota del rival. Construye sus
- * decisiones exclusivamente a partir de `estadoDisparos` (matriz 10x10 con valores
- * 'desconocido' | 'agua' | 'impacto' | 'hundido').
+/**
+ * @fileoverview Módulo del algoritmo probabilístico
+ * @module algoritmoProbabilistico
  */
 
 import { FLOTA } from '../utils/tiposBarcos.js';
 import { TAMANO_TABLERO } from '../utils/tablero.js';
 
+/**
+ * Posibles estados observacionales de cada celda en la matriz del historial de disparos.
+ *
+ * @readonly
+ * @enum {string}
+ */
 export const ESTADOS_CELDA = {
   DESCONOCIDO: 'desconocido',
   AGUA: 'agua',
@@ -24,12 +20,65 @@ export const ESTADOS_CELDA = {
 };
 
 /**
- * Deduce qué tamaños de barcos de `FLOTA` siguen a flote si no se provee explícitamente
- * la lista de barcos restantes, analizando las celdas marcadas como 'hundido'.
+ * @typedef {Object} CeldaImpacto
+ * @property {number} fila - Índice de la fila en el tablero (0 a 9).
+ * @property {number} col - Índice de la columna en el tablero (0 a 9).
+ * @property {number} idx - Índice lineal equivalente en el arreglo plano (`fila * 10 + col`).
+ */
+
+/**
+ * @typedef {Object} AnalisisTablero
+ * @property {CeldaImpacto[]} impactos - Lista de celdas actualmente marcadas como `'impacto'`.
+ * @property {Uint8Array} bloqueadas - Mapa plano de 100 posiciones con `1` en celdas de `'agua'` o `'hundido'`.
+ * @property {Uint8Array} mapaImpactos - Mapa plano de 100 posiciones con `1` en celdas de `'impacto'`.
+ */
+
+/**
+ * @typedef {Object} ColocacionCandidata
+ * @property {number} fila - Fila inicial del barco.
+ * @property {number} col - Columna inicial del barco.
+ * @property {number} orientacion - Orientación (`0`: horizontal, `1`: vertical).
+ * @property {number} impactosCubiertos - Cantidad de impactos activos que cubre esta colocación.
+ */
+
+/**
+ * @typedef {Object} ConfiguracionMuestreada
+ * @property {boolean} esValida - Indica si la configuración superó todas las restricciones del tablero.
+ * @property {Uint8Array} ocupadas - Tablero plano de 100 posiciones con `1` en las celdas ocupadas por la flota simulada.
+ */
+
+/**
+ * @typedef {Object} CeldaRecomendada
+ * @property {number} fila - Índice de la fila recomendada (0 a 9).
+ * @property {number} col - Índice de la columna recomendada (0 a 9).
+ * @property {number} prob - Probabilidad estimada en escala de `0` a `100` (porcentaje).
+ */
+
+/**
+ * @typedef {Object} OpcionesSimulacion
+ * @property {Array<number|{tamano: number}>|null} [barcosRestantes=null] - Lista opcional de barcos que aún siguen a flote.
+ */
+
+/**
+ * @typedef {Object} ResultadoProbabilistico
+ * @property {number[][]} mapa - Matriz 10x10 con la probabilidad porcentual `P(c)` de cada celda (`0` a `100`).
+ * @property {CeldaRecomendada|null} recomendada - Celda objetivo con mayor probabilidad (con desempate aleatorio).
+ * @property {number} validas - Cantidad total de configuraciones simuladas que resultaron válidas.
+ * @property {number} simulaciones - Cantidad total de simulaciones ejecutadas en el turno.
+ * @property {number} tiempoMs - Tiempo real de ejecución del cálculo en milisegundos.
+ */
+
+/**
+ * Deduce qué tamaños de barcos de la flota estándar siguen a flote analizando las
+ * celdas marcadas como `'hundido'` cuando no se provee explícitamente la lista de barcos restantes.
  *
- * @param {string[][]} estadoDisparos - Matriz 10x10 del historial de disparos
- * @param {Array<number|{tamano: number}>} [barcosRestantes] - Lista opcional de barcos activos
- * @returns {number[]} Arreglo de tamaños de barcos por colocar, ordenados de mayor a menor
+ * @param {string[][]} estadoDisparos - Matriz 10x10 con el historial de disparos conocidos.
+ * @param {Array<number|{tamano: number}>|null} [barcosRestantes=null] - Lista opcional de barcos aún no hundidos.
+ * @returns {number[]} Arreglo de tamaños de barcos activos ordenados de mayor a menor longitud.
+ *
+ * @example
+ * const tamanos = obtenerTamanosBarcosActivos(estadoDisparos);
+ * // Retorna, por ejemplo, [5, 4, 3, 3] si el Destructor (2) ya fue hundido.
  */
 export function obtenerTamanosBarcosActivos(estadoDisparos, barcosRestantes = null) {
   if (Array.isArray(barcosRestantes) && barcosRestantes.length > 0) {
@@ -47,7 +96,7 @@ export function obtenerTamanosBarcosActivos(estadoDisparos, barcosRestantes = nu
     }
   }
 
-  const todosLosTamanos = FLOTA.map((b) => b.tamano); // [5, 4, 3, 3, 2]
+  const todosLosTamanos = FLOTA.map((b) => b.tamano);
   if (celdasHundidas === 0) {
     return todosLosTamanos.sort((a, b) => b - a);
   }
@@ -80,16 +129,12 @@ export function obtenerTamanosBarcosActivos(estadoDisparos, barcosRestantes = nu
 }
 
 /**
- * Extrae las coordenadas de impactos activos ('impacto') y celdas bloqueadas
- * ('agua' o 'hundido') a partir de la matriz 10x10 de disparos.
- * Complejidad: O(N^2) donde N = 10 (100 operaciones).
+ * Extrae las coordenadas de impactos activos (`'impacto'`) y celdas bloqueadas
+ * (`'agua'` o `'hundido'`) a partir de la matriz 10x10 del tablero enemigo.
+ * Complejidad temporal: O(N^2), donde N = 10.
  *
- * @param {string[][]} estadoDisparos - Matriz 10x10
- * @returns {{
- *   impactos: Array<{fila: number, col: number, idx: number}>,
- *   bloqueadas: Uint8Array,
- *   mapaImpactos: Uint8Array
- * }}
+ * @param {string[][]} estadoDisparos - Matriz 10x10 con el estado observable de cada celda.
+ * @returns {AnalisisTablero} Objeto con la lista de impactos activos y los mapas planos de restricciones.
  */
 export function analizarEstadoTablero(estadoDisparos) {
   const impactos = [];
@@ -113,9 +158,17 @@ export function analizarEstadoTablero(estadoDisparos) {
 }
 
 /**
- * Verifica si un barco de longitud `tamano` puede colocarse en (fila, col) con orientación
- * horizontal (`0`), vertical (`1`), diagonal principal (`2`) o diagonal secundaria (`3`),
- * sin salirse del tablero, sin pisar celdas de 'agua'/'hundido' y sin superponerse con otro barco.
+ * Verifica si un barco de longitud `tamano` puede ubicarse en `(fila, col)` con la
+ * orientación indicada sin salirse del tablero, sin pisar celdas bloqueadas (`'agua'`
+ * o `'hundido'`) y sin superponerse con otro barco ya colocado en la simulación actual.
+ *
+ * @param {Uint8Array} ocupadas - Arreglo plano de 100 elementos con los barcos ya colocados.
+ * @param {Uint8Array} bloqueadas - Arreglo plano de 100 elementos con celdas prohibidas.
+ * @param {number} fila - Índice de fila inicial (0 a 9).
+ * @param {number} col - Índice de columna inicial (0 a 9).
+ * @param {number} tamano - Longitud del barco en celdas.
+ * @param {number} orientacion - `0`: horizontal, `1`: vertical.
+ * @returns {boolean} `true` si la colocación es geométrica y observacionalmente válida.
  */
 export function puedeColocarBarco(ocupadas, bloqueadas, fila, col, tamano, orientacion) {
   let df = 0;
@@ -123,17 +176,9 @@ export function puedeColocarBarco(ocupadas, bloqueadas, fila, col, tamano, orien
   if (orientacion === 0) {
     dc = 1;
     if (col + tamano > TAMANO_TABLERO) return false;
-  } else if (orientacion === 1) {
+  } else {
     df = 1;
     if (fila + tamano > TAMANO_TABLERO) return false;
-  } else if (orientacion === 2) {
-    df = 1;
-    dc = 1;
-    if (fila + tamano > TAMANO_TABLERO || col + tamano > TAMANO_TABLERO) return false;
-  } else if (orientacion === 3) {
-    df = 1;
-    dc = -1;
-    if (fila + tamano > TAMANO_TABLERO || col - (tamano - 1) < 0) return false;
   }
 
   for (let k = 0; k < tamano; k++) {
@@ -148,11 +193,19 @@ export function puedeColocarBarco(ocupadas, bloqueadas, fila, col, tamano, orien
 }
 
 /**
- * Marca las celdas de un barco sobre el tablero plano de la simulación actual.
+ * Marca las celdas ocupadas por un barco sobre el arreglo plano de la simulación actual.
+ *
+ * @param {Uint8Array} ocupadas - Arreglo plano de 100 elementos de la simulación actual.
+ * @param {number} fila - Fila inicial del barco.
+ * @param {number} col - Columna inicial del barco.
+ * @param {number} tamano - Longitud del barco.
+ * @param {number} orientacion - Orientación (`0`: horizontal, `1`: vertical).
+ * @param {number} valor - Valor a escribir (`1` para ocupar, `0` para limpiar).
+ * @returns {void}
  */
 function escribirBarco(ocupadas, fila, col, tamano, orientacion, valor) {
   const df = orientacion === 0 ? 0 : 1;
-  const dc = orientacion === 0 ? 1 : orientacion === 1 ? 0 : orientacion === 2 ? 1 : -1;
+  const dc = orientacion === 0 ? 1 : 0;
   for (let k = 0; k < tamano; k++) {
     const idx = (fila + k * df) * TAMANO_TABLERO + (col + k * dc);
     ocupadas[idx] = valor;
@@ -160,9 +213,17 @@ function escribirBarco(ocupadas, fila, col, tamano, orientacion, valor) {
 }
 
 /**
- * Enumera todas las colocaciones válidas para un barco de longitud `tamano` que pasan por
- * una celda de impacto `(filaObj, colObj)` y prioriza alineaciones colineales cuando hay
- * múltiples impactos adyacentes (como D6 y D7).
+ * Enumera todas las colocaciones válidas para un barco de longitud `tamano` que pasan
+ * por una celda de impacto `(filaObj, colObj)` y prioriza alineaciones colineales cuando
+ * existen múltiples impactos adyacentes.
+ *
+ * @param {Uint8Array} ocupadas - Arreglo plano de barcos colocados en la simulación.
+ * @param {Uint8Array} bloqueadas - Arreglo plano de celdas de `'agua'` o `'hundido'`.
+ * @param {Uint8Array} mapaImpactos - Arreglo plano con `1` en las celdas de `'impacto'`.
+ * @param {number} filaObj - Fila de la celda de impacto que se desea cubrir.
+ * @param {number} colObj - Columna de la celda de impacto que se desea cubrir.
+ * @param {number} tamano - Longitud del barco candidato.
+ * @returns {ColocacionCandidata[]} Lista de colocaciones válidas que cubren el impacto.
  */
 function obtenerColocacionesQueCubrenImpacto(
   ocupadas,
@@ -170,16 +231,14 @@ function obtenerColocacionesQueCubrenImpacto(
   mapaImpactos,
   filaObj,
   colObj,
-  tamano,
-  permitirDiagonal = false
+  tamano
 ) {
   const colocaciones = [];
-  const orientaciones = permitirDiagonal ? [0, 1, 2, 3] : [0, 1];
   let maxImpactosCubiertos = 1;
 
-  for (const orientacion of orientaciones) {
+  for (const orientacion of [0, 1]) {
     const df = orientacion === 0 ? 0 : 1;
-    const dc = orientacion === 0 ? 1 : orientacion === 1 ? 0 : orientacion === 2 ? 1 : -1;
+    const dc = orientacion === 0 ? 1 : 0;
 
     for (let offset = 0; offset < tamano; offset++) {
       const filaInicio = filaObj - offset * df;
@@ -216,18 +275,28 @@ function obtenerColocacionesQueCubrenImpacto(
 }
 
 /**
- * Generador / Muestreador de una configuración de la flota (1 simulación Monte Carlo).
+ * Genera y muestrea una configuración candidata completa de la flota para una simulación
+ * individual de Monte Carlo.
+ *
+ * Fases del muestreo:
+ * 1. Ancla barcos disponibles sobre las celdas con estado `'impacto'`.
+ * 2. Ubica los barcos restantes en posiciones aleatorias válidas sin superposición.
+ * 3. Valida la configuración resultante contra toda la evidencia conocida del tablero.
+ *
+ * @param {number[]} tamanosBarcos - Lista de tamaños de los barcos activos por ubicar.
+ * @param {CeldaImpacto[]} impactos - Lista de impactos activos aún no hundidos.
+ * @param {Uint8Array} bloqueadas - Arreglo plano de celdas de `'agua'` o `'hundido'`.
+ * @param {Uint8Array} mapaImpactos - Arreglo plano de celdas de `'impacto'`.
+ * @returns {ConfiguracionMuestreada} Resultado con la validez de la configuración y su mapa de ocupación.
  */
 export function muestrearConfiguracionFlota(
   tamanosBarcos,
   impactos,
   bloqueadas,
-  mapaImpactos,
-  permitirDiagonal = false
+  mapaImpactos
 ) {
   const ocupadas = new Uint8Array(TAMANO_TABLERO * TAMANO_TABLERO);
   const barcosDisponibles = [...tamanosBarcos];
-  const numOrientaciones = permitirDiagonal ? 4 : 2;
 
   if (impactos.length > 0) {
     for (let i = barcosDisponibles.length - 1; i > 0; i--) {
@@ -258,8 +327,7 @@ export function muestrearConfiguracionFlota(
         mapaImpactos,
         imp.fila,
         imp.col,
-        tamano,
-        permitirDiagonal
+        tamano
       );
 
       if (opciones.length > 0) {
@@ -285,7 +353,7 @@ export function muestrearConfiguracionFlota(
     let exito = false;
 
     for (let intento = 0; intento < INTENTOS_MUESTREO; intento++) {
-      const orientacion = Math.floor(Math.random() * numOrientaciones);
+      const orientacion = Math.floor(Math.random() * 2);
       const fila = Math.floor(Math.random() * TAMANO_TABLERO);
       const col = Math.floor(Math.random() * TAMANO_TABLERO);
 
@@ -310,9 +378,14 @@ export function muestrearConfiguracionFlota(
 }
 
 /**
- * Verifica que la configuración candidata sea 100 % compatible con la información conocida:
- * 1. Ninguna celda de 'agua' o 'hundido' contiene un barco activo.
- * 2. Todas las celdas marcadas como 'impacto' están cubiertas por un barco.
+ * Verifica que una configuración candidata sea 100 % compatible con la información
+ * conocida de la partida: ninguna celda de `'agua'` o `'hundido'` puede estar ocupada
+ * y todas las celdas de `'impacto'` deben estar cubiertas por algún barco.
+ *
+ * @param {Uint8Array} ocupadas - Tablero plano de 100 posiciones generado en la simulación.
+ * @param {CeldaImpacto[]} impactos - Lista de impactos activos conocidos.
+ * @param {Uint8Array} bloqueadas - Mapa plano de celdas marcadas como `'agua'` o `'hundido'`.
+ * @returns {boolean} `true` si la configuración es completamente válida.
  */
 export function validarConfiguracionCompleta(ocupadas, impactos, bloqueadas) {
   for (let i = 0; i < 100; i++) {
@@ -329,41 +402,38 @@ export function validarConfiguracionCompleta(ocupadas, impactos, bloqueadas) {
 }
 
 /**
- * Función principal del contrato entre capas (Persona 1, Persona 2 y Persona 3).
+ * Calcula el mapa de probabilidades `P(c)` para cada celda del tablero enemigo mediante
+ * simulación Monte Carlo y selecciona la celda recomendada con desempate aleatorio uniforme.
  *
- * Compatible exactamente con `DatosPruebas.js` y `Juego.jsx`:
- *   calcularProbabilidades(estadoDisparos, nSimulaciones) ->
- *     {
- *       mapa: number[10][10],            // Valores en porcentaje 0 - 100 (ej. 61.8)
- *       recomendada: { fila, col, prob }, // Celda objetivo con desempate aleatorio
- *       validas: number,                 // Configuraciones válidas
- *       simulaciones: number,            // 100 | 1000 | 5000 | 10000
- *       tiempoMs: number                 // Tiempo real en milisegundos
- *     }
+ * Fórmula aplicada:
+ *   `P(c) = (Configuraciones válidas con barco en c / Total de configuraciones válidas) * 100`
  *
- * @param {string[][]} estadoDisparos - Matriz 10x10 con 'desconocido' | 'agua' | 'impacto' | 'hundido'
- * @param {number} [nSimulaciones=5000] - Cantidad de simulaciones (100, 1000, 5000, 10000)
- * @param {object} [opciones={}] - Opciones adicionales (`barcosRestantes`, `permitirDiagonal`)
+ * @param {string[][]} estadoDisparos - Matriz 10x10 con `'desconocido' | 'agua' | 'impacto' | 'hundido'`.
+ * @param {number} [nSimulaciones=5000] - Cantidad de simulaciones a ejecutar (`100`, `1000`, `5000`, `10000`).
+ * @param {OpcionesSimulacion} [opciones={}] - Opciones adicionales de configuración.
+ * @returns {ResultadoProbabilistico} Mapa de calor, celda recomendada, conteo de válidas y tiempo en ms.
+ *
+ * @example
+ * const resultado = calcularProbabilidades(estadosEnemigo, 5000);
+ * // resultado.recomendada -> { fila: 3, col: 7, prob: 61.8 }
  */
 export function calcularProbabilidades(estadoDisparos, nSimulaciones = 5000, opciones = {}) {
   const inicioTiempo =
     typeof performance !== 'undefined' && performance.now ? performance.now() : Date.now();
 
-  const { barcosRestantes = null, permitirDiagonal = false } = opciones;
+  const { barcosRestantes = null } = opciones;
   const tamanosBarcos = obtenerTamanosBarcosActivos(estadoDisparos, barcosRestantes);
   const { impactos, bloqueadas, mapaImpactos } = analizarEstadoTablero(estadoDisparos);
 
   const conteoPorCelda = new Uint32Array(TAMANO_TABLERO * TAMANO_TABLERO);
   let configuracionesValidas = 0;
 
-  // Ejecutar las N simulaciones solicitadas
   for (let s = 0; s < nSimulaciones; s++) {
     const resultado = muestrearConfiguracionFlota(
       tamanosBarcos,
       impactos,
       bloqueadas,
-      mapaImpactos,
-      permitirDiagonal
+      mapaImpactos
     );
 
     if (resultado.esValida) {
@@ -377,7 +447,6 @@ export function calcularProbabilidades(estadoDisparos, nSimulaciones = 5000, opc
     }
   }
 
-  // Construir matriz 10x10 de probabilidades P(c) en escala 0 - 100 (igual que mockCalcularProbabilidades)
   const mapa = Array.from({ length: TAMANO_TABLERO }, () => Array(TAMANO_TABLERO).fill(0));
   let maxProb = -1;
   let candidatasMaximas = [];
@@ -411,7 +480,6 @@ export function calcularProbabilidades(estadoDisparos, nSimulaciones = 5000, opc
     candidatasMaximas = obtenerCeldasRespaldo(estadoDisparos, impactos);
   }
 
-  // Selección de la celda recomendada con desempate aleatorio uniforme
   let recomendada = null;
   if (candidatasMaximas.length > 0) {
     const indiceElegido = Math.floor(Math.random() * candidatasMaximas.length);
@@ -437,7 +505,12 @@ export function calcularProbabilidades(estadoDisparos, nSimulaciones = 5000, opc
 }
 
 /**
- * Respaldo en caso extremo de que 0 simulaciones converjan en un turno con N=100.
+ * Mecanismo de respaldo seguro cuando ninguna simulación aleatoria converge en un turno
+ * extremo con pocas simulaciones; prioriza celdas desconocidas adyacentes a impactos activos.
+ *
+ * @param {string[][]} estadoDisparos - Matriz 10x10 con el historial de disparos.
+ * @param {CeldaImpacto[]} impactos - Lista de impactos activos en el tablero.
+ * @returns {CeldaRecomendada[]} Lista de celdas candidatas de respaldo.
  */
 function obtenerCeldasRespaldo(estadoDisparos, impactos) {
   const dirs = [
