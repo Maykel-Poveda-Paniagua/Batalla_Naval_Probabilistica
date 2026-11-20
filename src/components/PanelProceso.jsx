@@ -1,5 +1,30 @@
 import '../css/PanelesInferiores.css';
 
+/**
+ * Muestra el resumen paso a paso de lo que hace el algoritmo en cada turno:
+ * cuántas configuraciones válidas encontró, cuál es la probabilidad más alta,
+ * qué casilla recomienda atacar y cuánto tardó en calcularlo.
+ *
+ * @component
+ * @example
+ * return (
+ *   <PanelProceso
+ *     validas={2306}
+ *     probabilidadMax={39.3}
+ *     tiempoMs={6.2}
+ *     recomendacion="F8"
+ *     siguienteAccion="Esperando tu disparo"
+ *   />
+ * )
+ *
+ * @param {Object} props - Propiedades del componente.
+ * @param {number} [props.validas=0] - Cantidad de ubicaciones válidas de barcos que encontró la simulación.
+ * @param {number} [props.probabilidadMax=0] - Porcentaje de probabilidad más alto entre las casillas sin explorar.
+ * @param {number} [props.tiempoMs=0] - Tiempo que tardó en calcular el mapa de calor (en milisegundos).
+ * @param {string} [props.recomendacion='—'] - Casilla sugerida para el próximo disparo (por ejemplo, 'F8').
+ * @param {string} [props.siguienteAccion='Esperando tu disparo'] - Mensaje que indica qué toca hacer en el turno actual.
+ * @returns {JSX.Element} Tarjeta con los pasos del cálculo de la IA y su tiempo de respuesta.
+ */
 export default function PanelProceso({
     validas = 0,
     probabilidadMax = 0,

@@ -20,11 +20,27 @@ import { realizarDisparo, verificarFinJuego } from '../utils/motorJuego';
 import { LETRAS } from '../utils/DatosPruebas';
 import '../css/Juego.css';
 
+/**
+ * Pantalla principal de la partida. Controla todo el flujo del juego desde la
+ * introducción narrativa, el despliegue de barcos y los turnos de combate contra la IA,
+ * hasta el resumen final de victoria o derrota.
+ *
+ * @component
+ * @example
+ * return <Juego />
+ *
+ * @returns {JSX.Element} Vista completa de la partida con tableros, barra superior y paneles inferiores.
+ */
 export default function Juego() {
     const [fase, setFase] = useState('lore'); // 'lore' | 'despliegue' | 'combate'
     const [nSimulaciones, setNSimulaciones] = useState(5000);
     const [esperandoEnemigo, setEsperandoEnemigo] = useState(false);
 
+    /**
+     * Cierra la introducción narrativa y pasa a la pantalla para acomodar los barcos.
+     *
+     * @returns {void}
+     */
     const manejarFinLore = () => {
         setFase('despliegue');
     };
@@ -71,6 +87,12 @@ export default function Juego() {
         ? 'Esperando ataque...'
         : 'Esperando tu disparo';
 
+    /**
+     * Reinicia toda la partida generando nuevos tableros aleatorios, limpiando
+     * historiales y estadísticas, y volviendo a la fase de despliegue.
+     *
+     * @returns {void}
+     */
     const manejarReiniciar = () => {
         const nuevoTableroJugador = colocarFlotaAleatoria();
         const nuevoTableroEnemigo = colocarFlotaAleatoria();
@@ -93,6 +115,13 @@ export default function Juego() {
         setFase('despliegue');
     };
 
+    /**
+     * Gira un barco del jugador entre horizontal y vertical durante la fase de despliegue
+     * y actualiza el tablero en pantalla.
+     *
+     * @param {string} idBarco - Identificador del barco que se quiere rotar.
+     * @returns {void}
+     */
     const manejarRotarBarco = (idBarco) => {
         const nuevoTablero = rotarBarcoEnTablero(tableroJugador, idBarco, TAMANO_TABLERO);
         setTableroJugador(nuevoTablero);
@@ -100,6 +129,15 @@ export default function Juego() {
         setBarcosPropios(obtenerBarcosParaUI(nuevoTablero));
     };
 
+    /**
+     * Mueve un barco del jugador a una nueva casilla durante el despliegue
+     * y actualiza la vista del tablero.
+     *
+     * @param {string} idBarco - Identificador del barco que se movió.
+     * @param {number} nuevaFila - Fila destino (0 a 9).
+     * @param {number} nuevaCol - Columna destino (0 a 9).
+     * @returns {void}
+     */
     const manejarMoverBarco = (idBarco, nuevaFila, nuevaCol) => {
         const nuevoTablero = moverBarcoEnTablero(tableroJugador, idBarco, nuevaFila, nuevaCol, TAMANO_TABLERO);
         setTableroJugador(nuevoTablero);
@@ -107,6 +145,14 @@ export default function Juego() {
         setBarcosPropios(obtenerBarcosParaUI(nuevoTablero));
     };
 
+    /**
+     * Ejecuta el disparo del jugador sobre una casilla del tablero enemigo, actualiza
+     * estadísticas e historial, revisa si ya ganó y cede el turno al agente IA.
+     *
+     * @param {number} fila - Fila atacada (0 a 9).
+     * @param {number} col - Columna atacada (0 a 9).
+     * @returns {void}
+     */
     const manejarDisparo = (fila, col) => {
         if (juegoTerminado || esperandoEnemigo) return;
 
@@ -176,6 +222,12 @@ export default function Juego() {
         }, 700);
     };
 
+    /**
+     * Ejecuta el turno del agente IA: calcula las probabilidades sobre el tablero
+     * del jugador, dispara a la mejor casilla, registra su jugada y verifica si ganó.
+     *
+     * @returns {void}
+     */
     const turnoAgente = () => {
         const vistaOcultaJugador = tableroAStrings(tableroJugador, false);
         const info = calcularProbabilidades(vistaOcultaJugador, nSimulaciones);
@@ -218,6 +270,11 @@ export default function Juego() {
         }
     };
 
+    /**
+     * Genera una nueva distribución al azar para los barcos del jugador en la fase de despliegue.
+     *
+     * @returns {void}
+     */
     const manejarPosicionAleatoria = () => {
         const nuevoTableroJugador = colocarFlotaAleatoria();
         setTableroJugador(nuevoTableroJugador);
@@ -329,6 +386,15 @@ export default function Juego() {
     );
 }
 
+/**
+ * Convierte la matriz interna del tablero en una matriz de textos sencillos
+ * (`'desconocido'`, `'barco'`, `'impacto'`, `'agua'`) para que los componentes visuales
+ * puedan dibujarla fácilmente.
+ *
+ * @param {Object[][]} tablero - Matriz de 10x10 con los objetos de cada casilla.
+ * @param {boolean} esPropio - Si es `true`, deja visibles los barcos que aún no han sido atacados.
+ * @returns {string[][]} Matriz de 10x10 con el estado visual de cada casilla.
+ */
 function tableroAStrings(tablero, esPropio) {
     const matriz = [];
     for (let f = 0; f < TAMANO_TABLERO; f++) {
@@ -354,6 +420,13 @@ function tableroAStrings(tablero, esPropio) {
     return matriz;
 }
 
+/**
+ * Extrae la lista de barcos del tablero con el formato que espera el componente `Barco`
+ * (posición, tamaño, orientación y si ya fue hundido por completo).
+ *
+ * @param {Object[][]} tablero - Matriz de 10x10 con la información actual de la flota.
+ * @returns {Array.<{id: string, barcoId: string, nombre: string, tamano: number, fila: number, col: number, horizontal: boolean, hundido: boolean}>} Lista de barcos lista para dibujarse en pantalla.
+ */
 function obtenerBarcosParaUI(tablero) {
     return obtenerBarcos(tablero).map((b) => ({
         id: b.nombre.toLowerCase(),
