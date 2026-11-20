@@ -1,0 +1,77 @@
+.barra-superior {
+    width: 100%;
+    box-sizing: border-box;
+    background: linear-gradient(180deg, #244973 0%, #183352 100%);
+    border-bottom: 4px solid #0b1114;
+    box-shadow: 0 3px 0 #6b3e26;
+    padding: 0.85rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    color: #f4ebd9;
+}
+
+.btn-reiniciar {
+    background-color: #d93829;
+    color: #ffffff;
+    border: 3px solid #0b1114;
+    border-radius: 8px;
+    padding: 0.45rem 1rem;
+    font-weight: 800;
+    font-size: 0.95rem;
+    cursor: pointer;
+    box-shadow: 3px 3px 0px #0b1114;
+    transition: transform 0.1s ease, background-color 0.15s ease;
+}
+
+.btn-reiniciar:hover {
+    background-color: #f04737;
+}
+
+.btn-reiniciar:active {
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0px #0b1114;
+}
+
+.controles-simulacion {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.etiqueta-sim {
+    font-weight: 800;
+    font-size: 0.9rem;
+    letter-spacing: 0.5px;
+    color: #f3b63a;
+    text-shadow: 1px 1px 0px #0b1114;
+}
+
+.grupo-simulaciones {
+    display: flex;
+    gap: 0.45rem;
+}
+
+.btn-sim {
+    background-color: #2c598a;
+    color: #f4ebd9;
+    border: 3px solid #0b1114;
+    border-radius: 8px;
+    padding: 0.35rem 0.75rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 2px 2px 0px #0b1114;
+    transition: transform 0.1s ease, background-color 0.15s ease;
+}
+
+.btn-sim:hover {
+    background-color: #366ca6;
+}
+
+.btn-sim.activo {
+    background-color: #ff9e44;
+    color: #0b1114;
+}

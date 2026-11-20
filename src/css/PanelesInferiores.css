@@ -1,0 +1,291 @@
+.tarjeta-panel {
+    display: flex;
+    flex-direction: column;
+    background-color: #f4ebd9;
+    border: 4px solid #6b3e26;
+    border-radius: 6px;
+    padding: 1rem 1.25rem;
+    color: #1b2a38;
+    box-shadow: 6px 6px 0px #0b1114;
+}
+
+.tarjeta-panel h3 {
+    margin: 0 0 0.75rem;
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: #6b3e26;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 3px dashed #6b3e26;
+    padding-bottom: 0.35rem;
+}
+
+/* Pie compartido para los 3 paneles */
+.proceso-pie,
+.panel-pie {
+    margin-top: auto;
+    padding-top: 0.55rem;
+    border-top: 2px dashed #6b3e26;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #243b53;
+}
+
+/* 1. Proceso */
+.lista-proceso {
+    list-style: none;
+    margin: 0 0 0.75rem;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+}
+
+.paso-fila {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    background-color: #e6d7b9;
+    border: 2px solid #6b3e26;
+    border-radius: 6px;
+    padding: 0.35rem 0.65rem;
+    font-size: 0.86rem;
+}
+
+.paso-fila--destacado {
+    background-color: #f37e73;
+    border-color: #b63f34;
+}
+
+.paso-num {
+    display: grid;
+    place-items: center;
+    width: 1.35rem;
+    height: 1.35rem;
+    border-radius: 50%;
+    background-color: #6b3e26;
+    color: #f4ebd9;
+    font-size: 0.78rem;
+    font-weight: 800;
+    flex-shrink: 0;
+}
+
+.paso-fila--destacado .paso-num {
+    background-color: #b63f34;
+}
+
+.paso-nombre {
+    flex: 1;
+    font-weight: 700;
+    color: #243b53;
+}
+
+.paso-valor {
+    font-weight: 800;
+    color: #0b1114;
+}
+
+.paso-fila--destacado .paso-valor {
+    background-color: #f3b63a;
+    border: 2px solid #0b1114;
+    border-radius: 4px;
+    padding: 0.1rem 0.45rem;
+}
+
+/* Subtítulos separadores de Jugador / Agente */
+.subtitulo-grupo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.45rem;
+}
+
+.subtitulo-grupo--agente {
+    margin-top: 0.25rem;
+}
+
+.subtitulo-grupo::after {
+    content: '';
+    flex: 1;
+    height: 1.5px;
+    background-color: rgba(107, 62, 38, 0.35);
+}
+
+.etiqueta-bando {
+    display: inline-block;
+    padding: 0.15rem 0.55rem;
+    border-radius: 4px;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.etiqueta-bando--jugador {
+    background-color: #6b3e26;
+    color: #f4ebd9;
+}
+
+.etiqueta-bando--agente {
+    background-color: #1565a8;
+    color: #ffffff;
+    border: 1.5px solid #0b1114;
+}
+
+/* 2. Estadísticas */
+.grid-estadisticas {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.55rem;
+    margin-bottom: 0.75rem;
+}
+
+.stat-caja {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.1rem;
+    background-color: #e6d7b9;
+    border: 2px solid #6b3e26;
+    border-left-width: 5px;
+    border-radius: 6px;
+    padding: 0.1rem 0.55rem;
+}
+
+.stat-caja--agente {
+    border-left-color: #1565a8;
+}
+
+.stat-etiqueta {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #486581;
+}
+
+.stat-numero {
+    font-size: 1rem;
+    font-weight: 800;
+    color: #0b1114;
+    line-height: 1.1;
+}
+
+/* 3. Historial */
+.historial-vacio {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 0.25rem;
+    min-height: 120px;
+    margin-bottom: 0.75rem;
+    background-color: #e6d7b9;
+    border: 2px dashed #6b3e26;
+    border-radius: 6px;
+    padding: 0.75rem;
+    color: #243b53;
+    font-weight: 700;
+    font-size: 0.9rem;
+}
+
+.historial-vacio small {
+    font-weight: 600;
+    color: #486581;
+    font-size: 0.8rem;
+}
+
+.historial-vacio--compacto {
+    min-height: 58px;
+    margin-bottom: 0.55rem;
+    padding: 0.45rem;
+    font-size: 0.82rem;
+}
+
+.lista-historial {
+    list-style: none;
+    margin: 0 0 0.75rem;
+    padding: 0;
+    max-height: 205px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.lista-historial--compacta {
+    max-height: 112px;
+    margin-bottom: 0.55rem;
+}
+
+.historial-fila {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    background-color: #e6d7b9;
+    border: 2px solid #6b3e26;
+    border-radius: 6px;
+    padding: 0.3rem 0.6rem;
+    font-size: 0.82rem;
+}
+
+/* Número de turno en círculo */
+.historial-turno {
+    display: grid;
+    place-items: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
+    background-color: #6b3e26;
+    color: #f4ebd9;
+    font-size: 0.72rem;
+    font-weight: 800;
+    flex-shrink: 0;
+}
+
+.historial-coord {
+    font-weight: 800;
+    color: #0b1114;
+    min-width: 2rem;
+}
+
+.historial-estado {
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.4px;
+}
+
+/* Solo cambia el color de las letras según el resultado */
+.estado--agua {
+    color: #0284c7; /* Celeste */
+}
+
+.estado--impacto {
+    color: #e03e2d; /* Rojo claro */
+}
+
+.estado--hundido {
+    color: #7f1d1d; /* Rojo oscuro */
+}
+
+/* Decisión pegada totalmente a la derecha */
+.badge-origen {
+    margin-left: auto;
+    flex-shrink: 0;
+    font-size: 0.7rem;
+    font-weight: 800;
+    background-color: #d4c2a1;
+    color: #243b53;
+    border: 1.5px solid #6b3e26;
+    padding: 0.12rem 0.45rem;
+    border-radius: 4px;
+}
+
+.badge-origen--ia {
+    background-color: #1565a8;
+    color: #ffffff;
+    border-color: #0b1114;
+}

@@ -1,0 +1,141 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
+  <defs>
+    <radialGradient id="cielo-victoria" cx="50%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#ffe27a" />
+      <stop offset="100%" stop-color="#d49324" />
+    </radialGradient>
+    <clipPath id="marco-victoria">
+      <rect x="6" y="6" width="288" height="288" rx="18" />
+    </clipPath>
+  </defs>
+
+  <g clip-path="url(#marco-victoria)">
+    <!-- FONDO: Cielo radiante -->
+    <rect width="300" height="300" fill="url(#cielo-victoria)" />
+
+    <!-- Rayos de sol -->
+    <g fill="#ffffff" opacity="0.24">
+      <polygon points="150,90 0,0 55,0" />
+      <polygon points="150,90 245,0 300,0" />
+      <polygon points="150,90 300,65 300,115" />
+      <polygon points="150,90 0,65 0,115" />
+    </g>
+
+    <!-- Estrellas de celebración -->
+    <polygon points="44,44 48,54 58,54 50,60 53,70 44,64 35,70 38,60 30,54 40,54" fill="#ffffff" opacity="0.85" />
+    <polygon points="256,48 260,58 270,58 262,64 265,74 256,68 247,74 250,64 242,58 252,58" fill="#ffffff" opacity="0.85" />
+
+    <!-- Mar azul brillante en calma -->
+    <path d="M 0 152 Q 40 147 80 152 T 160 152 T 240 152 T 300 152 L 300 300 L 0 300 Z" fill="#1c75bc" stroke="#0f1318" stroke-width="3" />
+
+    <!-- EL CAPITÁN (Mismo personaje y uniforme impecable, feliz) -->
+    <g stroke="#0f1318" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round">
+      <!-- Torso (Uniforme Blanco de Gala) -->
+      <path d="M 65 292 L 65 184 C 65 156, 92 140, 120 136 L 180 136 C 208 140, 235 156, 235 184 L 235 292 Z" fill="#ffffff" />
+
+      <!-- Camisa blanca y corbata negra -->
+      <polygon points="118,136 150,189 182,136" fill="#ffffff" />
+      <polygon points="143,156 157,156 159,184 150,196 141,184" fill="#14181f" />
+      <polygon points="142,148 158,148 155,157 145,157" fill="#14181f" />
+
+      <!-- Solapas de la chaqueta -->
+      <path d="M 118 136 L 104 166 L 122 176 L 114 186 L 150 209 L 150 189 Z" fill="#ffffff" />
+      <path d="M 182 136 L 196 166 L 178 176 L 186 186 L 150 209 L 150 189 Z" fill="#ffffff" />
+      <line x1="150" y1="209" x2="132" y2="239" />
+
+      <!-- Botones dorados -->
+      <circle cx="138" cy="222" r="5.5" fill="#f3b63a" />
+      <circle cx="170" cy="222" r="5.5" fill="#f3b63a" />
+
+      <!-- Medallas -->
+      <rect x="96" y="196" width="22" height="22" fill="#2c4163" />
+      <rect x="98" y="190" width="18" height="22" fill="#9bc2e6" />
+      <rect x="96" y="187" width="22" height="5" fill="#f3b63a" />
+      <rect x="96" y="210" width="22" height="5" fill="#f3b63a" />
+
+      <rect x="178" y="196" width="28" height="8" fill="#e05263" stroke="#0f1318" stroke-width="2" />
+      <rect x="180" y="196" width="8" height="8" fill="#f3b63a" />
+      <rect x="188" y="196" width="8" height="8" fill="#364f78" />
+
+      <!-- Charreteras doradas -->
+      <path d="M 74 154 L 112 138 L 116 148 L 78 164 C 73 166, 70 157, 74 154 Z" fill="#f3b63a" />
+      <line x1="88" y1="151" x2="102" y2="145" stroke="#0f1318" stroke-width="2.5" />
+      <line x1="91" y1="155" x2="105" y2="149" stroke="#0f1318" stroke-width="1.5" />
+
+      <path d="M 226 154 L 188 138 L 184 148 L 222 164 C 227 166, 230 157, 226 154 Z" fill="#f3b63a" />
+      <line x1="212" y1="151" x2="198" y2="145" stroke="#0f1318" stroke-width="2.5" />
+      <line x1="209" y1="155" x2="195" y2="149" stroke="#0f1318" stroke-width="1.5" />
+
+      <!-- Brazos doblados -->
+      <path d="M 65 179 C 46 214, 48 259, 86 274 L 138 274 L 138 246 L 94 239 L 98 209" fill="#ffffff" />
+      <polygon points="94,239 108,242 103,272 88,270" fill="#f3b63a" />
+      <polygon points="108,242 117,244 112,273 103,272" fill="#f3b63a" />
+      <polygon points="117,244 130,246 126,274 112,273" fill="#1e2226" />
+      <circle cx="84" cy="246" r="5" fill="none" stroke="#f3b63a" stroke-width="3.5" />
+
+      <path d="M 235 179 C 254 214, 252 259, 214 274 L 162 274 L 162 246 L 206 239 L 202 209" fill="#ffffff" />
+      <polygon points="206,239 192,242 197,272 212,270" fill="#f3b63a" />
+      <polygon points="192,242 183,244 188,273 197,272" fill="#f3b63a" />
+      <polygon points="183,244 170,246 174,274 188,273" fill="#1e2226" />
+      <circle cx="216" cy="246" r="5" fill="none" stroke="#f3b63a" stroke-width="3.5" />
+
+      <!-- Manos entrelazadas -->
+      <path d="M 126 248 C 138 242, 166 242, 174 250 L 172 282 C 160 290, 134 290, 126 280 Z" fill="#f4b192" />
+      <line x1="130" y1="259" x2="152" y2="258" />
+      <line x1="130" y1="269" x2="150" y2="268" />
+      <line x1="132" y1="278" x2="148" y2="277" />
+
+      <!-- Cabeza y Orejas -->
+      <path d="M 114 86 C 102 84, 102 108, 115 107" fill="#f4b192" />
+      <path d="M 113 92 Q 108 96 113 100" fill="none" />
+      <path d="M 186 86 C 198 84, 198 108, 185 107" fill="#f4b192" />
+      <path d="M 187 92 Q 192 96 187 100" fill="none" />
+
+      <!-- Rostro -->
+      <path d="M 114 62 L 186 62 L 185 116 C 185 142, 115 142, 115 116 Z" fill="#f4b192" />
+
+      <!-- Cabello lateral oscuro -->
+      <path d="M 114 62 L 122 62 L 118 86 L 114 86 Z" fill="#3a3d40" />
+      <path d="M 186 62 L 178 62 L 182 86 L 186 86 Z" fill="#3a3d40" />
+
+      <!-- Barba oscura completa -->
+      <path d="M 115 84 C 118 102, 124 110, 130 110 C 134 103, 142 101, 150 101 C 158 101, 166 103, 170 110 C 176 110, 182 102, 185 84 L 188 118 C 188 149, 112 149, 112 118 Z" fill="#3a3d40" />
+
+      <!-- Piel visible dentro de la barba -->
+      <path d="M 131 110 C 131 105, 169 105, 169 110 L 169 129 C 169 135, 156 135, 155 130 L 145 130 C 144 135, 131 135, 131 129 Z" fill="#f4b192" stroke-width="3" />
+
+      <!-- GRAN SONRISA DE VICTORIA -->
+      <path d="M 135 112 Q 150 115 165 112 C 165 126, 157 130, 150 130 C 143 130, 135 126, 135 112 Z" fill="#ffffff" stroke="#0f1318" stroke-width="3.5" />
+
+      <!-- Nariz -->
+      <path d="M 146 78 C 148 88, 142 95, 145 99 C 148 102, 156 102, 158 97" fill="none" />
+
+      <!-- OJOS FELICES (arcos sonrientes) -->
+      <path d="M 127 87 Q 135 78 143 87" fill="none" stroke="#0f1318" stroke-width="4" />
+      <path d="M 157 87 Q 165 78 173 87" fill="none" stroke="#0f1318" stroke-width="4" />
+
+      <!-- CEJAS LEVANTADAS DE ORGULLO -->
+      <path d="M 124 72 Q 134 65 143 71" fill="none" stroke="#3a3d40" stroke-width="4.5" />
+      <path d="M 157 71 Q 166 65 176 72" fill="none" stroke="#3a3d40" stroke-width="4.5" />
+
+      <!-- Gorra de Capitán (recta e impecable) -->
+      <path d="M 102 48 C 102 16, 198 16, 198 48 C 198 58, 188 64, 188 64 L 112 64 C 112 64, 102 58, 102 48 Z" fill="#ffffff" />
+      <path d="M 111 53 Q 150 44 189 53 L 188 63 L 112 63 Z" fill="#1e2226" />
+      <path d="M 113 57 Q 150 48 187 57 L 186 62 Q 150 53 114 62 Z" fill="#f3b63a" />
+      <circle cx="114" cy="60" r="3" fill="#f3b63a" />
+      <circle cx="186" cy="60" r="3" fill="#f3b63a" />
+      <path d="M 110 62 Q 150 56 190 62 C 190 69, 110 69, 110 62 Z" fill="#1e2226" />
+
+      <!-- Emblema dorado con Ancla -->
+      <ellipse cx="150" cy="38" rx="9" ry="12" fill="#1e2226" stroke="#f3b63a" stroke-width="1.5" />
+      <circle cx="150" cy="38" r="7" fill="#f3b63a" />
+      <circle cx="150" cy="34" r="1.5" fill="none" stroke-width="1.5" />
+      <line x1="150" y1="35" x2="150" y2="43" stroke-width="1.5" />
+      <line x1="147" y1="37" x2="153" y2="37" stroke-width="1.5" />
+      <path d="M 145 40 Q 150 45 155 40" fill="none" stroke-width="1.5" />
+    </g>
+  </g>
+
+  <!-- Borde exterior -->
+  <rect x="6" y="6" width="288" height="288" rx="18" fill="none" stroke="#0f1318" stroke-width="5" />
+</svg>

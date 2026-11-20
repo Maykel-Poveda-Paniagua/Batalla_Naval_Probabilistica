@@ -1,0 +1,43 @@
+.juego-contenedor {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    width: 100%;
+    /* Velo negro al 60% de opacidad sobre la imagen de portada */
+    background-image: 
+        linear-gradient(rgba(11, 17, 20, 0.95), rgba(11, 17, 20, 0.6)),
+        url('../assets/Portada.jpg');
+    backdrop-filter: blur(3px);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+.juego-principal {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+    padding: 2rem 1.5rem 3rem;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.fila-tableros {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 3rem;
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+.panel-inferior {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+    gap: 1.25rem;
+    width: 100%;
+    max-width: 1040px;
+}
