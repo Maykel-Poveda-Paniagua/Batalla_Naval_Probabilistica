@@ -2,6 +2,7 @@ import '../css/PanelesInferiores.css';
 
 export default function PanelProceso({
     validas = 0,
+    probabilidadMax = 0,
     tiempoMs = 0,
     recomendacion = '—',
     siguienteAccion = 'Esperando tu disparo',
@@ -9,7 +10,7 @@ export default function PanelProceso({
     const pasos = [
         { num: 1, label: 'Información del tablero', valor: 'Actualizada' },
         { num: 2, label: 'Configuraciones válidas', valor: validas.toLocaleString('es-CR') },
-        { num: 3, label: 'Mapa de probabilidades', valor: 'Calculado' },
+        { num: 3, label: 'Mapa de probabilidades', valor: `MAX: ${probabilidadMax}%` },
         { num: 4, label: 'Celda recomendada', valor: recomendacion, destacado: true },
         { num: 5, label: 'Siguiente acción', valor: siguienteAccion },
     ];

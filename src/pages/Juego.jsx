@@ -45,7 +45,16 @@ export default function Juego() {
         barcosRestantes: 5,
     });
 
+    const [estadisticasAgente, setEstadisticasAgente] = useState({
+        disparos: 0,
+        impactos: 0,
+        fallos: 0,
+        barcosRestantes: 5,
+    });
+
     const [historial, setHistorial] = useState([]);
+    const [historialAgente, setHistorialAgente] = useState([]);
+    const [tiempoUltimoAgente, setTiempoUltimoAgente] = useState(0);
     const [turno, setTurno] = useState(0);
 
     const [juegoTerminado, setJuegoTerminado] = useState(false);
@@ -73,7 +82,10 @@ export default function Juego() {
         setBarcosPropios(obtenerBarcosParaUI(nuevoTableroJugador));
         setBarcosHundidos([]);
         setEstadisticas({ disparos: 0, impactos: 0, fallos: 0, barcosRestantes: 5 });
+        setEstadisticasAgente({ disparos: 0, impactos: 0, fallos: 0, barcosRestantes: 5 });
         setHistorial([]);
+        setHistorialAgente([]);
+        setTiempoUltimoAgente(0);
         setTurno(0);
         setJuegoTerminado(false);
         setGanador(null);
@@ -136,12 +148,16 @@ export default function Juego() {
             infoProceso.recomendada.fila === fila &&
             infoProceso.recomendada.col === col;
 
+        const probCelda = infoProceso.mapa?.[fila]?.[col] ?? 0;
+        const probPct = probCelda <= 1 ? Math.round(probCelda * 100) : Math.round(probCelda);
+
         setHistorial((prev) => [
             {
                 turno: turno + 1,
                 coord: `${LETRAS[fila]}${col + 1}`,
                 resultado: resultado.hundido ? 'hundido' : resultado.resultado,
                 siguioRecomendacion: fueSeguida,
+                probabilidad: probPct,
             },
             ...prev,
         ]);
@@ -161,7 +177,6 @@ export default function Juego() {
     };
 
     const turnoAgente = () => {
-        // La IA evalúa lo que conoce de tu tablero (sin ver tus barcos intactos)
         const vistaOcultaJugador = tableroAStrings(tableroJugador, false);
         const info = calcularProbabilidades(vistaOcultaJugador, nSimulaciones);
         if (!info.recomendada) return;
@@ -175,6 +190,27 @@ export default function Juego() {
         setTableroJugador(nuevoTableroJugador);
         setEstadosPropios(tableroAStrings(nuevoTableroJugador, true));
         setBarcosPropios(obtenerBarcosParaUI(nuevoTableroJugador));
+        setTiempoUltimoAgente(info.tiempoMs ?? 0);
+
+        setEstadisticasAgente((prev) => ({
+            disparos: prev.disparos + 1,
+            impactos: prev.impactos + (resultado.resultado === 'impacto' ? 1 : 0),
+            fallos: prev.fallos + (resultado.resultado !== 'impacto' ? 1 : 0),
+            barcosRestantes: prev.barcosRestantes - (resultado.hundido ? 1 : 0),
+        }));
+
+        const probCelda = info.mapa?.[fila]?.[col] ?? 0;
+        const probPct = probCelda <= 1 ? Math.round(probCelda * 100) : Math.round(probCelda);
+
+        setHistorialAgente((prev) => [
+            {
+                turno: prev.length + 1,
+                coord: `${LETRAS[fila]}${col + 1}`,
+                resultado: resultado.hundido ? 'hundido' : resultado.resultado,
+                probabilidad: probPct,
+            },
+            ...prev,
+        ]);
 
         if (verificarFinJuego(nuevoTableroJugador)) {
             setJuegoTerminado(true);
@@ -188,6 +224,14 @@ export default function Juego() {
         setEstadosPropios(tableroAStrings(nuevoTableroJugador, true));
         setBarcosPropios(obtenerBarcosParaUI(nuevoTableroJugador));
     };
+
+    const probRecomendada = infoProceso.recomendada
+        ? (() => {
+              const { fila, col } = infoProceso.recomendada;
+              const val = infoProceso.mapa?.[fila]?.[col] ?? 0;
+              return val <= 1 ? (val * 100).toFixed(1) : Number(val).toFixed(1);
+          })()
+        : '0.0';
 
     return (
         <div className="juego-contenedor">
@@ -238,17 +282,36 @@ export default function Juego() {
                         <section className="panel-inferior" aria-label="Panel de control">
                             <PanelProceso
                                 validas={infoProceso.validas}
+                                probabilidadMax={probRecomendada}
                                 tiempoMs={infoProceso.tiempoMs}
                                 recomendacion={coordRecomendada}
                                 siguienteAccion={siguienteAccion}
                             />
                             <PanelEstadisticas
-                                disparos={estadisticas.disparos}
-                                impactos={estadisticas.impactos}
-                                fallos={estadisticas.fallos}
-                                barcosRestantes={estadisticas.barcosRestantes}
+                                statsJugador={{
+                                    disparos: estadisticas.disparos,
+                                    impactos: estadisticas.impactos,
+                                    fallos: estadisticas.fallos,
+                                    hundidos: 5 - estadisticas.barcosRestantes,
+                                    restantes: estadisticas.barcosRestantes,
+                                }}
+                                statsAgente={{
+                                    disparos: estadisticasAgente.disparos,
+                                    impactos: estadisticasAgente.impactos,
+                                    fallos: estadisticasAgente.fallos,
+                                    hundidos: 5 - estadisticasAgente.barcosRestantes,
+                                    restantes: estadisticasAgente.barcosRestantes,
+                                }}
+                                usoIA={{
+                                    seguidas: historial.filter((h) => h.siguioRecomendacion).length,
+                                    total: historial.length,
+                                }}
+                                tiempoIA={tiempoUltimoAgente}
                             />
-                            <PanelHistorial historial={historial} />
+                            <PanelHistorial
+                                historialJugador={historial}
+                                historialAgente={historialAgente}
+                            />
                         </section>
                     </>
                 )}
