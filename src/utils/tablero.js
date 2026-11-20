@@ -3,6 +3,11 @@ import { FLOTA } from './tiposBarcos.js';
 export const TAMANO_TABLERO = 10;
 
 // Crea un tablero vacío de 10x10
+/**
+ * Crea un tablero de 10 por 10 sin barcos ni disparos.
+ *
+ * @returns {Array<Array<Object>>} Tablero vacío.
+ */
 export function crearTableroVacio() {
   const tablero = [];
 
@@ -17,12 +22,25 @@ export function crearTableroVacio() {
       });
     }
     tablero.push(fila);
+
   }
 
   return tablero;
 }
 
 // Verifica si se puede colocar un barco en esa posición (ignorando opcionalmente un barco por su id)
+/**
+ * Comprueba si un barco cabe en la posición sin chocar con otros.
+ *
+ * @param {Array<Array<Object>>} tablero - Tablero donde se comprueba la posición.
+ * @param {number} fila - Fila inicial.
+ * @param {number} col - Columna inicial.
+ * @param {number} tamano - Cantidad de casillas que ocupa el barco.
+ * @param {string} orientacion - Orientación horizontal o vertical.
+ * @param {string|null} idIgnorar - Barco que se puede ignorar al comprobar.
+ * @returns {boolean} Verdadero si se puede colocar el barco.
+ */
+
 function puedeColocar(tablero, fila, col, tamano, orientacion, idIgnorar = null) {
   for (let i = 0; i < tamano; i++) {
     const f = orientacion === 'horizontal' ? fila : fila + i;
@@ -41,9 +59,20 @@ function puedeColocar(tablero, fila, col, tamano, orientacion, idIgnorar = null)
   }
 
   return true;
+
 }
 
 // Coloca un barco en el tablero
+/**
+ * Coloca un barco en las casillas indicadas del tablero.
+ *
+ * @param {Array<Array<Object>>} tablero - Tablero que se modifica.
+ * @param {Object} barco - Datos del barco.
+ * @param {number} fila - Fila inicial.
+ * @param {number} col - Columna inicial.
+ * @param {string} orientacion - Orientación del barco.
+ */
+
 function colocarBarco(tablero, barco, fila, col, orientacion) {
   const id = barco.nombre + '-' + fila + '-' + col;
 
@@ -58,9 +87,16 @@ function colocarBarco(tablero, barco, fila, col, orientacion) {
       orientacion: orientacion,
     };
   }
+
 }
 
 // Coloca todos los barcos aleatoriamente
+/**
+ * Crea un tablero e intenta colocar toda la flota aleatoriamente.
+ *
+ * @returns {Array<Array<Object>>} Tablero con los barcos colocados.
+ */
+
 export function colocarFlotaAleatoria() {
   const tablero = crearTableroVacio();
   const orientaciones = ['horizontal', 'vertical'];
@@ -78,6 +114,7 @@ export function colocarFlotaAleatoria() {
       if (puedeColocar(tablero, fila, col, barco.tamano, orientacion)) {
         colocarBarco(tablero, barco, fila, col, orientacion);
         colocado = true;
+
       }
 
       intentos++;
@@ -88,6 +125,13 @@ export function colocarFlotaAleatoria() {
 }
 
 // Obtiene la lista de barcos en el tablero con sus coordenadas y orientación
+/**
+ * Obtiene los barcos del tablero con sus posiciones y orientación.
+ *
+ * @param {Array<Array<Object>>} tablero - Tablero que contiene los barcos.
+ * @returns {Array<Object>} Lista de barcos encontrados.
+ */
+
 export function obtenerBarcos(tablero) {
   const barcosMap = {};
 
@@ -111,6 +155,7 @@ export function obtenerBarcos(tablero) {
         barcosMap[id].celdas.push({ fila: f, col: c });
       }
     }
+
   }
 
   return Object.values(barcosMap).map((b) => {
@@ -131,6 +176,13 @@ export function obtenerBarcos(tablero) {
 }
 
 // Verifica si un barco está hundido
+/**
+ * Comprueba si todas las casillas de un barco fueron atacadas.
+ *
+ * @param {Array<Array<Object>>} tablero - Tablero donde está el barco.
+ * @param {string} barcoId - Identificador del barco.
+ * @returns {boolean} Verdadero si el barco está hundido.
+ */
 export function barcoHundido(tablero, barcoId) {
   for (let f = 0; f < TAMANO_TABLERO; f++) {
     for (let c = 0; c < TAMANO_TABLERO; c++) {
@@ -144,7 +196,14 @@ export function barcoHundido(tablero, barcoId) {
   return true; // Todas las celdas fueron atacadas
 }
 
-// Helper interno para localizar un barco tanto por su id exacto como por nombre en minúsculas
+// Para localizar un barco tanto por su id exacto como por nombre en minúsculas
+/**
+ * Busca un barco por su identificador o nombre y obtiene su posición inicial.
+ *
+ * @param {Array<Array<Object>>} tablero - Tablero donde se busca.
+ * @param {string} idBarco - Identificador o nombre del barco.
+ * @returns {Object|null} Barco y coordenadas mínimas, o null si no aparece.
+ */
 function buscarBarcoEnTablero(tablero, idBarco) {
   let barcoObj = null;
   let minFila = TAMANO_TABLERO;
@@ -157,14 +216,25 @@ function buscarBarcoEnTablero(tablero, idBarco) {
         barcoObj = b;
         if (f < minFila) minFila = f;
         if (c < minCol) minCol = c;
+
       }
     }
+
   }
 
   return barcoObj ? { barcoObj, minFila, minCol } : null;
 }
 
 // Rota el barco alrededor de su centro y lo ajusta si está pegado a un borde
+/**
+ * Intenta girar un barco y ajusta su posición si está cerca de un borde.
+ *
+ * @param {Array<Array<Object>>} tableroJugador - Tablero actual del jugador.
+ * @param {string} idBarco - Barco que se quiere girar.
+ * @param {number} tamanoTablero - Tamaño del tablero.
+ * @returns {Array<Array<Object>>} Tablero con el giro, o el original si no se puede.
+ */
+
 export function rotarBarcoEnTablero(tableroJugador, idBarco, tamanoTablero = TAMANO_TABLERO) {
   const nuevoTablero = tableroJugador.map((f) => f.map((c) => ({ ...c })));
   const encontrado = buscarBarcoEnTablero(nuevoTablero, idBarco);
@@ -185,7 +255,7 @@ export function rotarBarcoEnTablero(tableroJugador, idBarco, tamanoTablero = TAM
   let nuevaFila = nuevaOrientacion === 'horizontal' ? centroFila : centroFila - desplazamientoCentro;
   let nuevaCol = nuevaOrientacion === 'horizontal' ? centroCol - desplazamientoCentro : centroCol;
 
-  // 3. Ajuste contra paredes (Wall-Kick): empujar hacia adentro si toca algún borde
+  // 3. Ajuste contra paredes: empujar hacia adentro si toca algún borde
   if (nuevaOrientacion === 'horizontal') {
     if (nuevaCol < 0) nuevaCol = 0;
     if (nuevaCol + tamano > tamanoTablero) nuevaCol = tamanoTablero - tamano;
@@ -206,6 +276,8 @@ export function rotarBarcoEnTablero(tableroJugador, idBarco, tamanoTablero = TAM
         nuevoTablero[f][c].barco = null;
       }
     }
+
+
   }
 
   // 6. Escribir el barco en su nueva orientación
@@ -220,9 +292,22 @@ export function rotarBarcoEnTablero(tableroJugador, idBarco, tamanoTablero = TAM
   }
 
   return nuevoTablero;
+
+
 }
 
 // Mueve un barco a (nuevaFila, nuevaCol) si no se sale ni pisa otro barco
+/**
+ * Intenta mover un barco sin salir del tablero ni superponerlo.
+ *
+ * @param {Array<Array<Object>>} tableroJugador - Tablero actual del jugador.
+ * @param {string} idBarco - Barco que se quiere mover.
+ * @param {number} nuevaFila - Nueva fila inicial.
+ * @param {number} nuevaCol - Nueva columna inicial.
+ * @param {number} tamanoTablero - Tamaño del tablero.
+ * @returns {Array<Array<Object>>} Tablero actualizado, o el original si no se puede mover.
+ */
+
 export function moverBarcoEnTablero(tableroJugador, idBarco, nuevaFila, nuevaCol, tamanoTablero = TAMANO_TABLERO) {
   const nuevoTablero = tableroJugador.map((f) => f.map((c) => ({ ...c })));
   const encontrado = buscarBarcoEnTablero(nuevoTablero, idBarco);
