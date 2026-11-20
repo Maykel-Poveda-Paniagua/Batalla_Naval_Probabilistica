@@ -9,6 +9,10 @@
 - Yeinery Durán Bastos
 - Maykel Poveda Paniagua
 
+## Aplicación desplegada
+
+[https://maykel-poveda-paniagua.github.io/Proyecto1_Ruteo_PlanificacionDeCargas/](https://maykel-poveda-paniagua.github.io/Batalla_Naval_Probabilistica/)
+
 ## Descripción
 
 Aplicación web hecha con React del clásico juego de **Batalla Naval** (Battleship), donde el jugador coloca su flota en un tablero de 10x10 y compite por turnos contra un agente basado en simulaciones probabilísticas (Monte Carlo) para localizar y hundir los barcos enemigos con ayuda de un mapa de calor.
